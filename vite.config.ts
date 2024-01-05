@@ -7,6 +7,9 @@ export default defineConfig({
   plugins: [react()],
 
   build: {
+    rollupOptions: {
+      external: /^(\.dist|.git|node_modules)$/ig
+    },
     outDir: ".dist",
     assetsDir: "chunks",
   },
