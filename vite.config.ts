@@ -9,20 +9,20 @@ if (!existsSync("./.cache")) mkdirSync("./.cache");
 const makeCache = (name: string, data: any) => writeFileSync(`./.cache/${new Date().getTime()}_${name}.js`, `(${ inspect(data, true, Infinity, false) })`);
 
 const the_plugin = (order: "post" | "pre") => {
-  const time = new Date().getTime();
+  const tag = Math.floor(Math.random() * 9999);
   return {
-    name: `the_cacher_${order}_${time}`,
+    name: `the_cacher_${order}_${tag}`,
     transformIndexHtml: {
       order,
       handler: (html, ctx) => {
-        makeCache(`${time.toString().slice(-3)}_transformIndexHtml_${order}`, { html, ctx });
+        makeCache(`${tag}_transformIndexHtml_${order}`, { html, ctx });
         return html;
       },
     },
     transform: {
       order,
       handler(code, id, options) {
-        makeCache(`${time.toString().slice(-3)}_transform_${order}`, { code, id, options });
+        makeCache(`${tag}_transform_${order}`, { code, id, options });
         return {
           code,
         };
