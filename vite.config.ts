@@ -8,25 +8,28 @@ if (!existsSync("./.cache")) mkdirSync("./.cache");
 
 const makeCache = (name: string, data: any) => writeFileSync(`./.cache/${new Date().getTime()}_${name}.js`, `(${ inspect(data, true, Infinity, false) })`);
 
-const the_plugin = (order: "post" | "pre") => ({
-  name: `the_cacher_${order}_${new Date().getTime()}`,
-  transformIndexHtml: {
-    order,
-    handler: (html, ctx) => {
-      makeCache(`transformIndexHtml_${order}`, { html, ctx });
-      return html;
+const the_plugin = (order: "post" | "pre") => {
+  const time = new Date().getTime();
+  return {
+    name: `the_cacher_${order}_${time}`,
+    transformIndexHtml: {
+      order,
+      handler: (html, ctx) => {
+        makeCache(`${time.toString().slice(-3)}_transformIndexHtml_${order}`, { html, ctx });
+        return html;
+      },
     },
-  },
-  transform: {
-    order,
-    handler(code, id, options) {
-      makeCache(`transform_${order}`, { code, id, options });
-      return {
-        code,
-      };
+    transform: {
+      order,
+      handler(code, id, options) {
+        makeCache(`${time.toString().slice(-3)}_transform_${order}`, { code, id, options });
+        return {
+          code,
+        };
+      },
     },
-  },
-} as PluginOption);
+  } as PluginOption;
+};
 
 // https://vitejs.dev/config/
 export default defineConfig({
