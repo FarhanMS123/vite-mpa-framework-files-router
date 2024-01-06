@@ -8,8 +8,11 @@ if (!existsSync("./.cache")) mkdirSync("./.cache");
 
 const makeCache = (name: string, data: unknown) => writeFileSync(`./.cache/${new Date().getTime()}_${name}.js`, `(${ inspect(data, true, Infinity, false) })`);
 
+let pos = 1000;
+
 const the_plugin = (order: "post" | "pre") => {
-  const tag = Math.floor(Math.random() * 9999);
+  pos += Math.floor(Math.random() * 999)
+  const tag = pos;
   return {
     name: `the_cacher_${order}_${tag}`,
     transformIndexHtml: {
@@ -41,9 +44,12 @@ export default defineConfig({
       }
     },
   },
+  // [1734, 2199, 3194, 3682]
   plugins: [
+    the_plugin("pre"),  // 1734
+    the_plugin("post"), // 2199
     react(),
-    the_plugin("pre"),
-    the_plugin("post"),
+    the_plugin("pre"),  // 3194
+    the_plugin("post"), // 3682
   ],
 })
