@@ -6,7 +6,7 @@ import { inspect } from "util";
 
 if (!existsSync("./.cache")) mkdirSync("./.cache");
 
-const makeCache = (name: string, data: any) => writeFileSync(`./.cache/${new Date().getTime()}_${name}.js`, `(${ inspect(data, true, Infinity, false) })`);
+const makeCache = (name: string, data: unknown) => writeFileSync(`./.cache/${new Date().getTime()}_${name}.js`, `(${ inspect(data, true, Infinity, false) })`);
 
 const the_plugin = (order: "post" | "pre") => {
   const tag = Math.floor(Math.random() * 9999);
@@ -33,6 +33,14 @@ const the_plugin = (order: "post" | "pre") => {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      input: {
+        // "index": "index.html",
+        "chunks/main": "src/main.tsx",
+      }
+    },
+  },
   plugins: [
     react(),
     the_plugin("pre"),
