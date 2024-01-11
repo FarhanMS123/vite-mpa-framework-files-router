@@ -43,7 +43,24 @@ export default defineConfig({
         main: "src/other.html",
         "simp/megamendung": "index.html",
         // "chunks/main": "src/main.tsx",
-      }
+      },
+      output: [
+        {
+          name: "index",
+          // file: "sample.html",
+          entryFileNames: "sample.html",
+        },
+        {
+          name: "main",
+          // file: "the-one.html",
+          entryFileNames: "the-one.html",
+        },
+        {
+          name: "simp/megamendung",
+          // file: "simp_megamendung.html",
+          entryFileNames: "simp_megamendung.html",
+        },
+      ],
     },
   },
   // [1734, 2199, 3194, 3682]
