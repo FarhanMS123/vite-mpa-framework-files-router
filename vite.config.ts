@@ -11,7 +11,7 @@ const makeCache = (name: string, data: unknown) => writeFileSync(`./.cache/${new
 let pos = 1000;
 
 const the_plugin = (order: "post" | "pre") => {
-  pos += Math.floor(Math.random() * 999)
+  pos += 13; // Math.floor(Math.random() * 999)
   const tag = pos;
   return {
     name: `the_cacher_${order}_${tag}`,
@@ -38,10 +38,10 @@ const the_plugin = (order: "post" | "pre") => {
 export default defineConfig({
   build: {
     rollupOptions: {
-      input: {
-        // "index": "index.html",
-        "chunks/main": "src/main.tsx",
-      }
+      // input: {
+      //   "index": "index.html",
+      //   "chunks/main": "src/main.tsx",
+      // }
     },
   },
   // [1734, 2199, 3194, 3682]
