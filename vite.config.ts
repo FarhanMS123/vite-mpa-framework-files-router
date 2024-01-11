@@ -39,26 +39,29 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        "index": "index.html",
+        index: "index.html",
+        main: "src/other.html",
+        "simp/megamendung": "index.html",
         // "chunks/main": "src/main.tsx",
       }
     },
   },
   // [1734, 2199, 3194, 3682]
   plugins: [
-    {
-      name: "something",
-      transformIndexHtml: {
-        order: "pre",
-        handler: (html) => {
-          return html.replace("%SCRIPT_SRC%", "/src/main.tsx");
-        },
-      },
-    },
-    the_plugin("pre"),  // 1734
-    the_plugin("post"), // 2199
+    // {
+    //   name: "something",
+    //   transformIndexHtml: {
+    //     order: "pre",
+    //     handler: (html) => {
+    //       return html;
+    //       // return html.replace("%SCRIPT_SRC%", "/src/main.tsx");
+    //     },
+    //   },
+    // },
+    // the_plugin("pre"),  // 1734
+    // the_plugin("post"), // 2199
     react(),
-    the_plugin("pre"),  // 3194
-    the_plugin("post"), // 3682
+    // the_plugin("pre"),  // 3194
+    // the_plugin("post"), // 3682
   ],
 })
