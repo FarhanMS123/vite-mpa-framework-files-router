@@ -8,9 +8,12 @@ export default defineConfig({
 
   build: {
     rollupOptions: {
-      external: /^(\.dist|.git|node_modules)$/ig
+      input: {
+        "page-name.tsx.js": "src/page-name.tsx",
+      },
+      external: /^(.git|dist|node_modules)$/ig
     },
-    outDir: ".dist",
+    outDir: "dist",
     assetsDir: "chunks",
   },
 
