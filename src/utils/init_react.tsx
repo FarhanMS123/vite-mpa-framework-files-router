@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react'
 import ReactDOM from 'react-dom/client'
 
-export function createRoot(component: ReactNode) {
+export function createRootReact(component: ReactNode) {
     let root = document.getElementById("root")!;
 
     if (!root) {

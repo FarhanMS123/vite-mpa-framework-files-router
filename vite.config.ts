@@ -8,17 +8,16 @@ export default defineConfig({
 
   build: {
     rollupOptions: {
-      input: {
-        "page-name": "src/clean.html",
-      },
-      external: /^(.git|dist|node_modules)$/ig
+      // input: {},
+      // output: [], // { name, entryFileNames }
+      external: /^(.git|.cache.local|dist|node_modules)$/ig,
     },
     outDir: "dist",
     assetsDir: "chunks",
   },
 
   root: process.cwd(),
-  publicDir: "src",
+  publicDir: ".",
   base: "/",
 
   define: {

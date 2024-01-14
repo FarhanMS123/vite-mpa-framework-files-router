@@ -23,7 +23,11 @@
     "eslint": "^8.55.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "glob": "^10.3.10",
+    "micromatch": "^4.0.5",
+    "mustache": "^4.2.0",
     "typescript": "^5.2.2",
-    "vite": "^5.0.8"
+    "vite": "^5.0.8",
+    "vite-plugin-inspect": "^0.8.1"
   }
 }
