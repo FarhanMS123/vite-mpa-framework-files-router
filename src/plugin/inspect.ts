@@ -3,10 +3,10 @@ import process from "process";
 import { writeFileSync, existsSync, mkdirSync } from "fs";
 import { inspect } from "util";
 
-if (!existsSync("./.cache")) mkdirSync("./.cache");
+if (!existsSync("./.inspect.local")) mkdirSync("./.inspect.local");
 
 export const makeCache = (name: string, data: unknown) => writeFileSync(
-    `${process.cwd()}/.cache/${new Date().getTime()}_${name}.js`, 
+    `${process.cwd()}/.inspect.local/${new Date().getTime()}_${name}.js`, 
     `(${ inspect(data, true, Infinity, false) })`
 );
 

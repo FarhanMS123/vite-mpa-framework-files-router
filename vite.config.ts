@@ -1,10 +1,18 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import process from "process";
+import Inspect from 'vite-plugin-inspect'
+import createInspect from "./src/plugin/inspect";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    Inspect({
+      build: true,
+      outputDir: ".vite-inspect.local",
+    }),
+    react(),
+  ],
 
   build: {
     rollupOptions: {
