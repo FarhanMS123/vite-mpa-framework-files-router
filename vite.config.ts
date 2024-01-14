@@ -1,8 +1,9 @@
-import { defineConfig } from 'vite'
+import { defineConfig, splitVendorChunkPlugin } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import process from "process";
 import Inspect from 'vite-plugin-inspect'
 import createInspect from "./src/plugin/inspect";
+import { defaultPattern, traverFiles } from "./src/plugin/files-router";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -11,13 +12,19 @@ export default defineConfig({
       build: true,
       outputDir: ".vite-inspect.local",
     }),
+    createInspect("pre"),
+    createInspect("post"),
+    
+    splitVendorChunkPlugin(),
     react(),
+
+    createInspect("pre"),
+    createInspect("post"),
   ],
 
   build: {
     rollupOptions: {
-      // input: {},
-      // output: [], // { name, entryFileNames }
+      ...traverFiles(defaultPattern), // { input, output }
       external: /^(.git|.cache.local|dist|node_modules)$/ig,
     },
     outDir: "dist",

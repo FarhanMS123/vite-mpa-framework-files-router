@@ -15,6 +15,13 @@
 - [x] Store in `.dist` inside `chunks` instead of `assets`.
 - [x] Activate Github Runner to compile as pages
 
+```css
+/* .html would be parsed using handlebars */
+.html, .hbs, .ejs, .haml, .md,
+.page.tsx, .page.jsx, .page.vue, .page.ts, .page.js
+page-file.page.tsx -> page-file.html
+```
+
 ## References
 
 - https://vitejs.dev/guide/env-and-mode.html#env-variables
