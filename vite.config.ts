@@ -9,7 +9,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        "page-name.tsx.js": "src/page-name.tsx",
+        "page-name": "src/clean.html",
       },
       external: /^(.git|dist|node_modules)$/ig
     },
