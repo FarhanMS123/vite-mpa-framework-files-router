@@ -41,7 +41,7 @@ export default defineConfig({
       input: {
         index: "index.html",
         main: "src/other.html",
-        "simp/megamendung": "index.html",
+        "simp/megamendung.tsx": "index.html",
         // "chunks/main": "src/main.tsx",
       },
       output: [
