@@ -6,7 +6,7 @@
 
 ## TODO
 - [x] No `public`
-- [x] Copy all folders and files except `.dist`, `node_modules`, and `.git`
+- [x] Copy all folders and files except `.dist`, `node_modules`, `src`,  and `.git`
 - [ ] Import `src/page-name.tsx`, use `src/clean.html`, then put to `.dist` and `.dist/chunks`
 - [ ] Get all `lowercase_alpha-numb3r1c_kebab-snake_case.{html,tsx,jsx,vue,md}` to be page
 - [ ] Implement to `lowercase_alpha-numb3r1c_kebab-snake_case.*.html` for convenience...
