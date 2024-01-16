@@ -5,7 +5,6 @@ import Inspect from 'vite-plugin-inspect'
 import createInspect from "./src/plugin/inspect";
 import { pattern, traversFiles } from "./src/plugin/files-router";
 
-const x = traversFiles({});
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -26,7 +25,6 @@ export default defineConfig({
 
   build: {
     rollupOptions: {
-      ...x, // { input, output }
       external: /^(.git|.cache.local|dist|node_modules)$/ig,
     },
     outDir: "dist",

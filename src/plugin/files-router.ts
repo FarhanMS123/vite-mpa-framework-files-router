@@ -29,10 +29,12 @@ export const traversFiles = async ({ included, excluded, opts }: {
     return {
         transformIndexHtml: {
             order: "pre",
-            handler: (html, ctx) => ({
-                html: "",
-                tags: [],
-            })
+            handler: (html, ctx) => {
+                return {
+                    html: html,
+                    tags: [],
+                };
+            }
         },
         async config(config, env) {
             input = {};
