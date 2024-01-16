@@ -3,7 +3,9 @@ import react from '@vitejs/plugin-react-swc'
 import process from "process";
 import Inspect from 'vite-plugin-inspect'
 import createInspect from "./src/plugin/inspect";
-import { pattern, traverFiles } from "./src/plugin/files-router";
+import { pattern, traversFiles } from "./src/plugin/files-router";
+
+const x = traversFiles({});
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -24,7 +26,7 @@ export default defineConfig({
 
   build: {
     rollupOptions: {
-      ...traverFiles(pattern), // { input, output }
+      ...x, // { input, output }
       external: /^(.git|.cache.local|dist|node_modules)$/ig,
     },
     outDir: "dist",
