@@ -75,7 +75,7 @@ export default defineConfig({
     //     },
     //   },
     // },
-    // the_plugin("pre"),  // 1734
+    the_plugin("pre"),  // 1734
     // the_plugin("post"), // 2199
     react(),
     // the_plugin("pre"),  // 3194
