@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react-swc'
 import process from "process";
 import Inspect from 'vite-plugin-inspect'
 import createInspect from "./src/plugin/inspect";
-import { pattern, traversFiles } from "./src/plugin/files-router";
+import { traversFiles } from "./src/plugin/files-router";
 
 
 // https://vitejs.dev/config/
@@ -16,6 +16,7 @@ export default defineConfig({
     createInspect("pre"),
     createInspect("post"),
     
+    traversFiles(),
     splitVendorChunkPlugin(),
     react(),
 
@@ -25,7 +26,7 @@ export default defineConfig({
 
   build: {
     rollupOptions: {
-      external: /^(.git|.cache.local|dist|node_modules)$/ig,
+      external: /^(.git|.*\.local|dist|node_modules)$/ig,
     },
     outDir: "dist",
     assetsDir: "chunks",

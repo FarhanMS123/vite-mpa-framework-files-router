@@ -2,16 +2,18 @@ import { PluginOption, UserConfig } from "vite";
 import { type GlobOptionsWithFileTypesUnset, glob } from "glob";
 import { relative } from "path";
 
-export const defaultExcluded = [".git", ".cache.local", "src", "dist", "node_modules"];
+export const defaultExcluded = [".git", "*.local", "src", "dist", "node_modules"];
 export const defaultIncluded = [".html", ".page.tsx", ".page.ts", ".page.js"];
 export const extendedIncluded = [".html", ".page.tsx", ".page.vue", ".md", ".page.ts", ".page.js"];
 export const pattern = (excluded: string[], included: string[]) => `!(${ excluded.join("|") })/**/*@(${ included.join("|") })`;
 
-export const traversFiles = async ({ included, excluded, opts }: {
+export const traversFiles = async (params?: {
     included?: string[];
     excluded?: string[];
     opts?: GlobOptionsWithFileTypesUnset;
 }) => {
+    let { included, } = params;
+    const { excluded, opts, } = params;
     included = included ?? defaultIncluded;
 
     const data: {
