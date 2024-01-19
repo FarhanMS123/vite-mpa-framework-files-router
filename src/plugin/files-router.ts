@@ -1,5 +1,6 @@
 import { PluginOption, UserConfig } from "vite";
 import { type GlobOptionsWithFileTypesUnset, glob } from "glob";
+import { relative } from "path";
 
 export const defaultExcluded = [".git", ".cache.local", "src", "dist", "node_modules"];
 export const defaultIncluded = [".html", ".page.tsx", ".page.ts", ".page.js"];
@@ -50,7 +51,7 @@ export const traversFiles = async ({ included, excluded, opts }: {
             for (const filename of files) {
                 // this would randomly rename the file to .html, for example:
                 // `a-file.page.tsx` and `a-file.page.vue` may just one to be rendered.
-                const rel = filename.slice(0, cwd.length) == cwd ? filename.slice(cwd.length + 1) : filename;
+                const rel = relative(cwd, filename);
                 const rgExt = RegExp(`(${ included.join("|").replace(/\./ig, "\\.") })$`, "i");
                 const trExt = rel.slice(rel.search(rgExt) + 1).split(".");
                 let name = rel.replace(rgExt, "");
