@@ -31,6 +31,12 @@ const the_plugin = (order: "post" | "pre") => {
         };
       },
     },
+    // resolveId(source, importer, options) {
+    //   makeCache(`${tag}_resolveId_${order}`, { source, importer, options });
+    // },
+    // load(id, options) {
+    //   makeCache(`${tag}_load_${order}`, { id, options });
+    // },
   } as PluginOption;
 };
 
@@ -39,23 +45,25 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        index: "index.html",
-        main: "src/other.html",
-        "simp/megamendung.tsx": "index.html",
+        // index: "index.html",
+        // main: "src/other.html",
+        // "simp/megamendung.tsx": "index.html",
+        "simp/megamendung": "src/other.html",
         // "chunks/main": "src/main.tsx",
       },
       output: [
-        {
-          name: "index",
-          entryFileNames: "sample.html",
-        },
-        {
-          name: "main",
-          entryFileNames: "the-one.html",
-        },
+        // {
+        //   name: "index",
+        //   entryFileNames: "sample.html",
+        // },
+        // {
+        //   name: "main",
+        //   entryFileNames: "the-one.html",
+        // },
         {
           name: "simp/megamendung",
-          entryFileNames: "simp_megamendung.html",
+          dir: "dist/simp",
+          entryFileNames: "megamendung.html",
         },
       ],
     },
