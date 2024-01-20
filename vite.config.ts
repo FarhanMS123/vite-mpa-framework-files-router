@@ -37,31 +37,28 @@ const the_plugin = (order: "post" | "pre") => {
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
-    // rollupOptions: {
-    //   input: {
-    //     index: "index.html",
-    //     main: "src/other.html",
-    //     "simp/megamendung": "index.html",
-    //     // "chunks/main": "src/main.tsx",
-    //   },
-    //   output: [
-    //     {
-    //       name: "index",
-    //       // file: "sample.html",
-    //       entryFileNames: "sample.html",
-    //     },
-    //     {
-    //       name: "main",
-    //       // file: "the-one.html",
-    //       entryFileNames: "the-one.html",
-    //     },
-    //     {
-    //       name: "simp/megamendung",
-    //       // file: "simp_megamendung.html",
-    //       entryFileNames: "simp_megamendung.html",
-    //     },
-    //   ],
-    // },
+    rollupOptions: {
+      input: {
+        index: "index.html",
+        main: "src/other.html",
+        "simp/megamendung.tsx": "index.html",
+        // "chunks/main": "src/main.tsx",
+      },
+      output: [
+        {
+          name: "index",
+          entryFileNames: "sample.html",
+        },
+        {
+          name: "main",
+          entryFileNames: "the-one.html",
+        },
+        {
+          name: "simp/megamendung",
+          entryFileNames: "simp_megamendung.html",
+        },
+      ],
+    },
   },
   // [1734, 2199, 3194, 3682]
   plugins: [
@@ -75,7 +72,7 @@ export default defineConfig({
     //     },
     //   },
     // },
-    // the_plugin("pre"),  // 1734
+    the_plugin("pre"),  // 1734
     // the_plugin("post"), // 2199
     splitVendorChunkPlugin(),
     react(),
