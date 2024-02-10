@@ -92,9 +92,9 @@ defineConfig({
     // the_plugin("pre"),  // 3194
     // the_plugin("post"), // 3682
   ],
-})
+});
 
-export default ([
+([
   {
     build: {
       rollupOptions: {
@@ -116,3 +116,22 @@ export default ([
     }
   },
 ] as UserConfig[])[0];
+
+export default defineConfig({
+  build: {
+    rollupOptions: //[
+      {
+        input: ["src/index.html"],
+        output: {
+          dir: "dist/a",
+        },
+      },
+      // {
+      //   input: ["src/other.html"],
+      //   output: {
+      //     dir: "dist/b",
+      //   },
+      // },
+    //],
+  }
+});
