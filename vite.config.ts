@@ -45,7 +45,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        // index: "index.html",
+        "namamama": "src/index.html",
         // main: "src/other.html",
         // "simp/megamendung.tsx": "index.html",
         "simp/megamendung": "src/other.html",
@@ -62,7 +62,12 @@ export default defineConfig({
         // },
         {
           name: "simp/megamendung",
-          dir: "dist/simp",
+          dir: "dist/megaa",
+          entryFileNames: "megamendung.html",
+        },
+        {
+          name: "namamama",
+          dir: "dist/nyehehe",
           entryFileNames: "megamendung.html",
         },
       ],
