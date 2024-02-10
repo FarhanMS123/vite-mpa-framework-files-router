@@ -1,4 +1,4 @@
-import { type PluginOption, defineConfig, splitVendorChunkPlugin } from 'vite'
+import { type PluginOption, defineConfig, splitVendorChunkPlugin, UserConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 
 import { writeFileSync, existsSync, mkdirSync } from "fs";
@@ -41,7 +41,7 @@ const the_plugin = (order: "post" | "pre") => {
 };
 
 // https://vitejs.dev/config/
-export default defineConfig({
+defineConfig({
   build: {
     rollupOptions: {
       input: {
@@ -93,3 +93,26 @@ export default defineConfig({
     // the_plugin("post"), // 3682
   ],
 })
+
+export default ([
+  {
+    build: {
+      rollupOptions: {
+        input: ["src/index.html"],
+        output: {
+          dir: "dist/a",
+        },
+      },
+    }
+  },
+  {
+    build: {
+      rollupOptions: {
+        input: ["src/other.html"],
+        output: {
+          dir: "dist/b",
+        },
+      },
+    }
+  },
+] as UserConfig[])[0];
