@@ -40,6 +40,49 @@ const the_plugin = (order: "post" | "pre") => {
     // load(id, options) {
     //   makeCache(`${tag}_load_${order}`, { id, options });
     // },
+
+    // config: {
+    //   order,
+    //   handler(config, env) {
+    //     console.log("here 46 by " + order);
+    //   },
+    // },
+    config: (config, env) => {
+      console.log("here 46 by " + order);
+      return {
+        build: {
+          // ? Open this on NodeJS
+          // ? (await vite.resolveConfig("vite.config.ts", "build")).build.rollupOptions
+          // ? This is become more difficult
+
+          rollupOptions: [
+            {
+              input: ["x"],
+            },
+            {
+              input: ["y"],
+            },
+          ],
+          // rollupOptions: {
+          //     input: ["x"],
+          //   },
+        }
+      };
+
+      // ! not working
+      // return [
+      //   {
+      //     build: {
+      //       outDir: "dist/a",
+      //     },
+      //   },
+      //   {
+      //     build: {
+      //       outDir: "dist/b",
+      //     },
+      //   },
+      // ];
+    },
   } as PluginOption;
 };
 
@@ -55,30 +98,31 @@ export default defineConfig({
         // "chunks/main": "src/main.tsx",
       },
       output: {
-        entryFileNames(chunkInfo) {
-          console.log("59", chunkInfo);
-          return relative(process.cwd(), chunkInfo.facadeModuleId);
-        },
-        banner: (chunkInfo) => {
-          console.log("63", chunkInfo);
-          return "";
-        },
-        footer: (chunkInfo) => {
-          console.log("67", chunkInfo);
-          return "";
-        },
+        // entryFileNames(chunkInfo) {
+        //   console.log("59", chunkInfo);
+        //   return relative(process.cwd(), chunkInfo.facadeModuleId);
+        // },
+        // banner: (chunkInfo) => {
+        //   console.log("63", chunkInfo);
+        //   return "";
+        // },
+        // footer: (chunkInfo) => {
+        //   console.log("67", chunkInfo);
+        //   return "";
+        // },
+        // intro: (chunkInfo) => {
+        //   console.log("75", chunkInfo);
+        //   return "";
+        // },
+        // outro: (chunkInfo) => {
+        //   console.log("79", chunkInfo);
+        //   return "";
+        // },
+        
         // chunkFileNames: (chunkInfo) => {
         //   console.log("71", chunkInfo);
         //   return "";
         // },
-        intro: (chunkInfo) => {
-          console.log("75", chunkInfo);
-          return "";
-        },
-        outro: (chunkInfo) => {
-          console.log("79", chunkInfo);
-          return "";
-        },
         // sourcemapFileNames: (chunkInfo) => {
         //   console.log("71", chunkInfo);
         //   return "";
@@ -99,7 +143,7 @@ export default defineConfig({
     //   },
     // },
     the_plugin("pre"),  // 1734
-    // the_plugin("post"), // 2199
+    the_plugin("post"), // 2199
     splitVendorChunkPlugin(),
     react(),
     // the_plugin("pre"),  // 3194
