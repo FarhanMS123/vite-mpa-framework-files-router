@@ -1,7 +1,8 @@
-import { type PluginOption, defineConfig, splitVendorChunkPlugin, UserConfig } from 'vite'
+import { type PluginOption, defineConfig, splitVendorChunkPlugin, type UserConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc'
 
 import { writeFileSync, existsSync, mkdirSync } from "fs";
+import { relative } from "path";
 import { inspect } from "util";
 
 if (!existsSync("./.cache")) mkdirSync("./.cache");
@@ -19,6 +20,7 @@ const the_plugin = (order: "post" | "pre") => {
       order,
       handler: (html, ctx) => {
         makeCache(`${tag}_transformIndexHtml_${order}`, { html, ctx });
+        console.log("23");
         return html;
       },
     },
@@ -26,6 +28,7 @@ const the_plugin = (order: "post" | "pre") => {
       order,
       handler(code, id, options) {
         makeCache(`${tag}_transform_${order}`, { code, id, options });
+        console.log("31");
         return {
           code,
         };
@@ -41,7 +44,7 @@ const the_plugin = (order: "post" | "pre") => {
 };
 
 // https://vitejs.dev/config/
-defineConfig({
+export default defineConfig({
   build: {
     rollupOptions: {
       input: {
@@ -51,26 +54,12 @@ defineConfig({
         "simp/megamendung": "src/other.html",
         // "chunks/main": "src/main.tsx",
       },
-      output: [
-        // {
-        //   name: "index",
-        //   entryFileNames: "sample.html",
-        // },
-        // {
-        //   name: "main",
-        //   entryFileNames: "the-one.html",
-        // },
-        {
-          name: "simp/megamendung",
-          dir: "dist/megaa",
-          entryFileNames: "megamendung.html",
+      output: {
+        entryFileNames(chunkInfo) {
+          console.log(chunkInfo);
+          return relative(process.cwd(), chunkInfo.facadeModuleId);
         },
-        {
-          name: "namamama",
-          dir: "dist/nyehehe",
-          entryFileNames: "megamendung.html",
-        },
-      ],
+      },
     },
   },
   // [1734, 2199, 3194, 3682]
@@ -92,46 +81,4 @@ defineConfig({
     // the_plugin("pre"),  // 3194
     // the_plugin("post"), // 3682
   ],
-});
-
-([
-  {
-    build: {
-      rollupOptions: {
-        input: ["src/index.html"],
-        output: {
-          dir: "dist/a",
-        },
-      },
-    }
-  },
-  {
-    build: {
-      rollupOptions: {
-        input: ["src/other.html"],
-        output: {
-          dir: "dist/b",
-        },
-      },
-    }
-  },
-] as UserConfig[])[0];
-
-export default defineConfig({
-  build: {
-    rollupOptions: //[
-      {
-        input: ["src/index.html"],
-        output: {
-          dir: "dist/a",
-        },
-      },
-      // {
-      //   input: ["src/other.html"],
-      //   output: {
-      //     dir: "dist/b",
-      //   },
-      // },
-    //],
-  }
 });
