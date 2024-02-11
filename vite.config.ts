@@ -3,8 +3,6 @@ import react from '@vitejs/plugin-react-swc'
 import process from "process";
 import Inspect from 'vite-plugin-inspect'
 import createInspect from "./src/plugin/inspect";
-import { traversFiles } from "./src/plugin/files-router";
-
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -16,7 +14,6 @@ export default defineConfig({
     createInspect("pre"),
     createInspect("post"),
     
-    traversFiles(),
     splitVendorChunkPlugin(),
     react(),
 
@@ -41,4 +38,4 @@ export default defineConfig({
     "import.meta.env.time": new Date().getTime(),
     VITE_TIME: new Date().getTime(),
   },
-})
+});
