@@ -56,9 +56,33 @@ export default defineConfig({
       },
       output: {
         entryFileNames(chunkInfo) {
-          console.log(chunkInfo);
+          console.log("59", chunkInfo);
           return relative(process.cwd(), chunkInfo.facadeModuleId);
         },
+        banner: (chunkInfo) => {
+          console.log("63", chunkInfo);
+          return "";
+        },
+        footer: (chunkInfo) => {
+          console.log("67", chunkInfo);
+          return "";
+        },
+        // chunkFileNames: (chunkInfo) => {
+        //   console.log("71", chunkInfo);
+        //   return "";
+        // },
+        intro: (chunkInfo) => {
+          console.log("75", chunkInfo);
+          return "";
+        },
+        outro: (chunkInfo) => {
+          console.log("79", chunkInfo);
+          return "";
+        },
+        // sourcemapFileNames: (chunkInfo) => {
+        //   console.log("71", chunkInfo);
+        //   return "";
+        // },
       },
     },
   },
