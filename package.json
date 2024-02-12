@@ -29,7 +29,7 @@
     "tsx": "^4.7.1",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
-    "vite-plugin-html-template-mpa": "^1.0.6",
-    "vite-plugin-inspect": "^0.8.1"
+    "vite-plugin-inspect": "^0.8.1",
+    "vite-plugin-virtual-html": "^1.1.19"
   }
 }

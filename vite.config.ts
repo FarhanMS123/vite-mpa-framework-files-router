@@ -1,9 +1,9 @@
-import { defineConfig, splitVendorChunkPlugin } from 'vite'
+import { PluginOption, defineConfig, splitVendorChunkPlugin } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import process from "process";
 import Inspect from 'vite-plugin-inspect'
 import createInspect from "./src/plugin/inspect";
-import htmlTemplate from 'vite-plugin-html-template-mpa'
+import virtualHtml from "vite-plugin-virtual-html";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -14,30 +14,42 @@ export default defineConfig({
     // }),
     // createInspect("pre"),
     // createInspect("post"),
-    
-    htmlTemplate({
-      minify: false,
+
+    virtualHtml({
       pages: {
-        0: {
-          filename: "test/page-name.page.js.html",
+        "0": {
           template: "src/template/clean.html",
-          inject: {
-            data: {
-              script_src: "/test/page-name.page.js"
-            }
+          data: {
+            script_src: "test/page-name.page.tsx",
           },
         },
-        1: {
-          filename: "test/page-name.page.tsx.html",
-          template: "src/template/clean.html",
-          inject: {
-            data: {
-              script_src: "/test/page-name.page.tsx"
-            }
-          },
-        },
-     },
-    }),
+      },
+      indexPage: "0",
+    }) as unknown as PluginOption,
+    
+    // htmlTemplate({
+    //   minify: false,
+    //   pages: {
+    //     0: {
+    //       filename: "test/page-name.page.js.html",
+    //       template: "src/template/clean.html",
+    //       inject: {
+    //         data: {
+    //           script_src: "/test/page-name.page.js"
+    //         }
+    //       },
+    //     },
+    //     1: {
+    //       filename: "test/page-name.page.tsx.html",
+    //       template: "src/template/clean.html",
+    //       inject: {
+    //         data: {
+    //           script_src: "/test/page-name.page.tsx"
+    //         }
+    //       },
+    //     },
+    //  },
+    // }),
 
     splitVendorChunkPlugin(),
     react(),
