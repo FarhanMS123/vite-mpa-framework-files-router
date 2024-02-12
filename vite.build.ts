@@ -11,16 +11,13 @@ import { UserConfig, build, mergeConfig } from "vite";
     configs.push(mergeConfig(defaultConfig, {
         build: {
             rollupOptions: {
-                input: [],
+                input: {},
             },
         },
     } as UserConfig));
-    
-    const output = [];
 
-    for(const config of configs) {
-        output.push(await build(config));
+    for(const config of [configs[configs.length - 1]]) {
+        const output = await build(config);
+        console.log(output);
     }
-
-    console.log(output);
 })();
