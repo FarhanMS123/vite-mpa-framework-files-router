@@ -1,9 +1,17 @@
-import { PluginOption, defineConfig, splitVendorChunkPlugin } from 'vite'
+import { type PluginOption, defineConfig, splitVendorChunkPlugin } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import process from "process";
 import Inspect from 'vite-plugin-inspect'
 import createInspect from "./src/plugin/inspect";
-import virtualHtml from "vite-plugin-virtual-html";
+
+import { createHtmlPlugin } from 'vite-plugin-html'
+import htmlTemplateMPA from 'vite-plugin-html-template-mpa';
+import htmlTemplate from 'vite-plugin-html-template';
+import virtualHtml from 'vite-plugin-virtual-html';
+
+import mpaPlugin from 'vite-plugin-mpa-plus'
+import simpleHtmlPlugin from 'vite-plugin-simple-html';
+import mpa from 'vite-plugin-multi-pages';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -15,40 +23,32 @@ export default defineConfig({
     // createInspect("pre"),
     // createInspect("post"),
 
-    virtualHtml({
+    htmlTemplateMPA({
+      minify: false,
+      pagesDir: process.cwd(),
       pages: {
-        "0": {
+        "page1": {
+          filename: "test/page-name.page.js.html",
           template: "src/template/clean.html",
-          data: {
-            script_src: "test/page-name.page.tsx",
+          inject: {
+            data: {
+              script_src: "/test/page-name.page.js",
+            },
           },
         },
       },
-      indexPage: "0",
-    }) as unknown as PluginOption,
+    }),
     
-    // htmlTemplate({
-    //   minify: false,
+    // ! NOT WORKING
+    // htmlTemplate.default({
+    //   pagesDir: ".",
     //   pages: {
-    //     0: {
+    //     page1: {
     //       filename: "test/page-name.page.js.html",
     //       template: "src/template/clean.html",
-    //       inject: {
-    //         data: {
-    //           script_src: "/test/page-name.page.js"
-    //         }
-    //       },
+    //       title: "/test/page-name.page.js",
     //     },
-    //     1: {
-    //       filename: "test/page-name.page.tsx.html",
-    //       template: "src/template/clean.html",
-    //       inject: {
-    //         data: {
-    //           script_src: "/test/page-name.page.tsx"
-    //         }
-    //       },
-    //     },
-    //  },
+    //   },
     // }),
 
     splitVendorChunkPlugin(),
@@ -60,7 +60,9 @@ export default defineConfig({
 
   build: {
     rollupOptions: {
-      input: ["src/template/blank.html"],
+      input: {
+        "page1": "src/template/clean.html",
+      },
       external: /^(.git|.*\.local|dist|node_modules)$/ig,
     },
     outDir: "dist",
