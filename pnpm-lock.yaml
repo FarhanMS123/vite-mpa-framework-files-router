@@ -19,7 +19,7 @@ specifiers:
   typescript: ^5.2.2
   vite: ^5.0.8
   vite-plugin-handlebars: ^2.0.0
-  vite-plugin-html: ^3.2.2
+  vite-plugin-html: ^3.2.1
   vite-plugin-inspect: ^0.8.1
 
 dependencies:
@@ -43,7 +43,7 @@ devDependencies:
   typescript: 5.3.3
   vite: 5.0.11_@types+node@20.10.6
   vite-plugin-handlebars: 2.0.0_@types+node@20.10.6
-  vite-plugin-html: 3.2.2_vite@5.0.11
+  vite-plugin-html: 3.2.1_vite@5.0.11
   vite-plugin-inspect: 0.8.1_vite@5.0.11
 
 packages:
@@ -2352,8 +2352,8 @@ packages:
       - terser
     dev: true
 
-  /vite-plugin-html/3.2.2_vite@5.0.11:
-    resolution: {integrity: sha512-vb9C9kcdzcIo/Oc3CLZVS03dL5pDlOFuhGlZYDCJ840BhWl/0nGeZWf3Qy7NlOayscY4Cm/QRgULCQkEZige5Q==}
+  /vite-plugin-html/3.2.1_vite@5.0.11:
+    resolution: {integrity: sha512-UuNTUvGPa9BxZK1I/VC+hWMSl0eIE5ClEdXza3SGGb09jxxS7oAAjRGalUJNZI9lAPvu0W817GD53K/p78wxQw==}
     peerDependencies:
       vite: '>=2.0.0'
     dependencies:

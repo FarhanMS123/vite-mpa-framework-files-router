@@ -19,22 +19,21 @@ export default defineConfig({
     createHtmlPlugin({
       minify: false,
       pages: [
-        // {
-        //   filename: "test/page-name.page.js.html",
-        //   template: "src/template/clean.html",
-        //   injectOptions: {
-        //     data: {
-        //       script_src: "/test/page-name.page.js"
-        //     }
-        //   },
-        // },
         {
-          entry: "/test/page-name.page.tsx",
-          filename: "page-name.page.tsx.html",
+          filename: "test/page-name.page.js.html",
           template: "src/template/clean.html",
           injectOptions: {
             data: {
-              injectScript: `<script src="./inject.js"></script>`,
+              script_src: "/test/page-name.page.js"
+            }
+          },
+        },
+        {
+          filename: "test/page-name.page.tsx.html",
+          template: "/src/template/clean.html",
+          injectOptions: {
+            data: {
+              script_src: "/test/page-name.page.tsx"
             }
           },
         },
@@ -50,9 +49,7 @@ export default defineConfig({
 
   build: {
     rollupOptions: {
-      // input: {
-      //   "blank": "src/template/blank.html",
-      // },
+      input: {},
       external: /^(.git|.*\.local|dist|node_modules)$/ig,
     },
     outDir: "dist",
