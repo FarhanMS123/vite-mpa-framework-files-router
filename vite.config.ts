@@ -3,26 +3,29 @@ import react from '@vitejs/plugin-react-swc'
 import process from "process";
 import Inspect from 'vite-plugin-inspect'
 import createInspect from "./src/plugin/inspect";
+import { resolverRouter } from './src/plugin/files-router';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    Inspect({
-      build: true,
-      outputDir: ".vite-inspect.local",
-    }),
-    createInspect("pre"),
-    createInspect("post"),
+    // Inspect({
+    //   build: true,
+    //   outputDir: ".vite-inspect.local",
+    // }),
+    // createInspect("pre"),
+    // createInspect("post"),
     
+    resolverRouter(),
     splitVendorChunkPlugin(),
     react(),
 
-    createInspect("pre"),
-    createInspect("post"),
+    // createInspect("pre"),
+    // createInspect("post"),
   ],
 
   build: {
     rollupOptions: {
+      input: ["src/template/clean.html"],
       external: /^(.git|.*\.local|dist|node_modules)$/ig,
     },
     outDir: "dist",

@@ -2,16 +2,17 @@ import { type PluginOption, type UserConfig } from "vite";
 import { type GlobOptionsWithFileTypesUnset, glob } from "glob";
 import { relative } from "path";
 
-export type UserConfig2 = (Omit<UserConfig, "build"> & {
-    build?: Omit<UserConfig["build"], "rollupOptions"> & {
-        rollupOptions?: UserConfig["build"]["rollupOptions"][],
-    },
-}) | UserConfig[];
-
 export const defaultExcluded = [".git", "*.local", "src", "dist", "node_modules"];
 export const defaultIncluded = [".html", ".page.tsx", ".page.ts", ".page.js"];
 export const extendedIncluded = [".html", ".page.tsx", ".page.vue", ".md", ".page.ts", ".page.js"];
 export const pattern = (excluded: string[], included: string[]) => `!(${ excluded.join("|") })/**/*@(${ included.join("|") })`;
+
+export type CustomUserConfig = UserConfig & {
+    file_router?: {
+        relative?: string;
+        absolute?: string;
+    },
+};
 
 export const traversFiles = async (params?: {
     included?: string[];
@@ -111,4 +112,58 @@ export const traversFiles = async (params?: {
             name: "vite-plugin-file-incompile-hooks",
         },
     ] as PluginOption;
+};
+
+export const resolverRouter = () => {
+    let config = {} as CustomUserConfig;
+    return [
+        {
+            "name": "resolver-router-pre",
+            configResolved(_config) {
+                config = _config as unknown as CustomUserConfig;
+            },
+            transformIndexHtml: {
+                order: "pre",
+                handler: (html, ctx) => {
+                    console.log(config.file_router);
+                    if (config.file_router?.relative)
+                        return html.replace("%SCRIPT_SRC%", `/${config.file_router.relative}`);
+                },
+            },
+        },
+    ] as PluginOption;
+};
+
+export const generateRoutesConfig = async (params?: {
+    config?: UserConfig;
+    included?: string[];
+    excluded?: string[];
+    opts?: GlobOptionsWithFileTypesUnset;
+}) => {
+    let { included } = params;
+    const { excluded, opts, config } = params;
+    included = included ?? defaultIncluded;
+
+    const cwd = config?.root ?? process.cwd();
+                
+    const files = await glob(pattern(excluded ?? defaultExcluded, included), {
+        cwd,
+        nodir: true,
+        ...opts,
+    });
+
+    const _config: (CustomUserConfig)[] = [];
+
+    for (const filename of files) {
+        _config.push({
+            file_router: {
+                relative: relative(cwd, filename),
+                absolute: filename,
+            },
+
+            publicDir: false,
+        });
+    }
+
+    return _config;
 };
