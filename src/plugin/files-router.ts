@@ -1,6 +1,7 @@
 import { type PluginOption, type UserConfig } from "vite";
 import { type GlobOptionsWithFileTypesUnset, glob } from "glob";
-import { relative } from "path";
+import { relative, resolve, join } from "path";
+import { existsSync, mkdirSync, copyFileSync } from "fs";
 
 export const defaultExcluded = [".git", "*.local", "src", "dist", "node_modules"];
 export const defaultIncluded = [".html", ".page.tsx", ".page.ts", ".page.js"];
@@ -14,6 +15,17 @@ export type CustomUserConfig = UserConfig & {
     },
 };
 
+export type DataStore = {
+    relative: string;
+    absolute: string;
+    entryFilename: string; // output
+
+    template?: string;
+    data: {
+        SCRIPT_SRC: string;
+    } & Record<string, unknown>;
+};
+
 export const traversFiles = async (params?: {
     included?: string[];
     excluded?: string[];
@@ -23,18 +35,13 @@ export const traversFiles = async (params?: {
     const { excluded, opts, } = params;
     included = included ?? defaultIncluded;
 
-    const data: {
-        [name: string]: {
-            name: string;
-            filename: string;
-            entryFilename: string;
-            data: {
-                SCRIPT_SRC: string;
-            } & Record<string, unknown>;
-        }
-    } = {};
+    let cwd = "";
+    const data: Record<string, DataStore> = {};
     let input: UserConfig["build"]["rollupOptions"]["input"] = {};
-    let output: UserConfig["build"]["rollupOptions"]["output"] = [];
+    
+    const cache_wd = resolve(process.cwd(), ".travers-files.local");
+    if (!existsSync(cache_wd))
+        mkdirSync(cache_wd, { recursive: true, });
 
     return [
         {
@@ -50,8 +57,7 @@ export const traversFiles = async (params?: {
             },
             async config(config, env) {
                 input = {};
-                output = [];
-                const cwd = config.root ?? process.cwd();
+                cwd = config.root ?? process.cwd();
                 
                 const files = await glob(pattern(excluded ?? defaultExcluded, included), {
                     cwd,
@@ -60,51 +66,23 @@ export const traversFiles = async (params?: {
                 });
     
                 for (const filename of files) {
-                    // this would randomly rename the file to .html, for example:
-                    // `a-file.page.tsx` and `a-file.page.vue` may just one to be rendered.
+                    // there is no need to randomly rename the file to .html, for example:
+                    // `a-file.page.tsx` and `a-file.page.vue` may become 
+                    // `a-file.page.ts.html` and `a-file.page.vue.html`
                     const rel = relative(cwd, filename);
-                    const rgExt = RegExp(`(${ included.join("|").replace(/\./ig, "\\.") })$`, "i");
-                    const trExt = rel.slice(rel.search(rgExt) + 1).split(".");
-                    let name = rel.replace(rgExt, "");
     
-                    for (let i=trExt.length; i>=0; i--) {
-                        const join = `${ i == trExt.length ? "" : "_" }${ trExt.slice(i).join("_") }`;
-                        if (typeof input[`${ name }${ join }`] != "string") {
-                            name += join;
-                            break;
-                        }
-                    }
-    
-                    if (typeof input[name] == "string") continue;
-    
-                    if (rel.match(/\.html$/i)) input[name] = rel;
-                    else if (typeof input[name] != "string") input[name] = "src/template/default.html";
-    
-                    output.push({
-                        name,
-                        entryFileNames: rel,
-                    });
-                    data[name] = {
-                        name,
-                        entryFilename: `${name}.html`,
-                        filename: filename,
-                        data: {
-                            SCRIPT_SRC: filename,
-                        },
-                    };
+                    if (rel.match(/\.html$/i)) copyFileSync(filename, join(cache_wd, rel));
+                    else copyFileSync("src/template/clean.html", join(cache_wd, rel));
                 }
     
                 return {
                     build: {
                         rollupOptions: {
-                            input, // output,
-                            output: {
-                                "hehehe": {
-                                    
-                                },
-                            },
+                            input,
                         }
                     },
+                    root: cache_wd,
+                    publicDir: config.publicDir ? resolve(cwd, config.publicDir) : config.publicDir,
                 };
             },
         },
@@ -112,58 +90,4 @@ export const traversFiles = async (params?: {
             name: "vite-plugin-file-incompile-hooks",
         },
     ] as PluginOption;
-};
-
-export const resolverRouter = () => {
-    let config = {} as CustomUserConfig;
-    return [
-        {
-            "name": "resolver-router-pre",
-            configResolved(_config) {
-                config = _config as unknown as CustomUserConfig;
-            },
-            transformIndexHtml: {
-                order: "pre",
-                handler: (html, ctx) => {
-                    console.log(config.file_router);
-                    if (config.file_router?.relative)
-                        return html.replace("%SCRIPT_SRC%", `/${config.file_router.relative}`);
-                },
-            },
-        },
-    ] as PluginOption;
-};
-
-export const generateRoutesConfig = async (params?: {
-    config?: UserConfig;
-    included?: string[];
-    excluded?: string[];
-    opts?: GlobOptionsWithFileTypesUnset;
-}) => {
-    let { included } = params;
-    const { excluded, opts, config } = params;
-    included = included ?? defaultIncluded;
-
-    const cwd = config?.root ?? process.cwd();
-                
-    const files = await glob(pattern(excluded ?? defaultExcluded, included), {
-        cwd,
-        nodir: true,
-        ...opts,
-    });
-
-    const _config: (CustomUserConfig)[] = [];
-
-    for (const filename of files) {
-        _config.push({
-            file_router: {
-                relative: relative(cwd, filename),
-                absolute: filename,
-            },
-
-            publicDir: false,
-        });
-    }
-
-    return _config;
 };
