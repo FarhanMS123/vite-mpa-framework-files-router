@@ -29,12 +29,12 @@ export default defineConfig({
         //   },
         // },
         {
-          // entry: "test/page-name.page.tsx",
-          filename: "test/page-name.page.tsx.html",
+          entry: "/test/page-name.page.tsx",
+          filename: "page-name.page.tsx.html",
           template: "src/template/clean.html",
           injectOptions: {
             data: {
-              script_src: "/test/page-name.page.tsx"
+              injectScript: `<script src="./inject.js"></script>`,
             }
           },
         },
@@ -50,9 +50,9 @@ export default defineConfig({
 
   build: {
     rollupOptions: {
-      input: {
-        "blank": "src/template/blank.html",
-      },
+      // input: {
+      //   "blank": "src/template/blank.html",
+      // },
       external: /^(.git|.*\.local|dist|node_modules)$/ig,
     },
     outDir: "dist",
