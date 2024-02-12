@@ -3,8 +3,7 @@ import react from '@vitejs/plugin-react-swc'
 import process from "process";
 import Inspect from 'vite-plugin-inspect'
 import createInspect from "./src/plugin/inspect";
-import handlebars from 'vite-plugin-handlebars';
-import { createHtmlPlugin } from 'vite-plugin-html'
+import htmlTemplate from 'vite-plugin-html-template-mpa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -16,28 +15,28 @@ export default defineConfig({
     // createInspect("pre"),
     // createInspect("post"),
     
-    createHtmlPlugin({
+    htmlTemplate({
       minify: false,
-      pages: [
-        {
+      pages: {
+        0: {
           filename: "test/page-name.page.js.html",
           template: "src/template/clean.html",
-          injectOptions: {
+          inject: {
             data: {
               script_src: "/test/page-name.page.js"
             }
           },
         },
-        {
+        1: {
           filename: "test/page-name.page.tsx.html",
-          template: "/src/template/clean.html",
-          injectOptions: {
+          template: "src/template/clean.html",
+          inject: {
             data: {
               script_src: "/test/page-name.page.tsx"
             }
           },
         },
-      ],
+     },
     }),
 
     splitVendorChunkPlugin(),
@@ -49,7 +48,7 @@ export default defineConfig({
 
   build: {
     rollupOptions: {
-      input: {},
+      input: ["src/template/blank.html"],
       external: /^(.git|.*\.local|dist|node_modules)$/ig,
     },
     outDir: "dist",
