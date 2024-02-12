@@ -3,7 +3,8 @@ import react from '@vitejs/plugin-react-swc'
 import process from "process";
 import Inspect from 'vite-plugin-inspect'
 import createInspect from "./src/plugin/inspect";
-import { resolverRouter } from './src/plugin/files-router';
+import handlebars from 'vite-plugin-handlebars';
+import { createHtmlPlugin } from 'vite-plugin-html'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -15,7 +16,31 @@ export default defineConfig({
     // createInspect("pre"),
     // createInspect("post"),
     
-    resolverRouter(),
+    createHtmlPlugin({
+      minify: false,
+      pages: [
+        // {
+        //   filename: "test/page-name.page.js.html",
+        //   template: "src/template/clean.html",
+        //   injectOptions: {
+        //     data: {
+        //       script_src: "/test/page-name.page.js"
+        //     }
+        //   },
+        // },
+        {
+          // entry: "test/page-name.page.tsx",
+          filename: "test/page-name.page.tsx.html",
+          template: "src/template/clean.html",
+          injectOptions: {
+            data: {
+              script_src: "/test/page-name.page.tsx"
+            }
+          },
+        },
+      ],
+    }),
+
     splitVendorChunkPlugin(),
     react(),
 
@@ -25,7 +50,9 @@ export default defineConfig({
 
   build: {
     rollupOptions: {
-      input: ["src/template/clean.html"],
+      input: {
+        "blank": "src/template/blank.html",
+      },
       external: /^(.git|.*\.local|dist|node_modules)$/ig,
     },
     outDir: "dist",
@@ -33,7 +60,8 @@ export default defineConfig({
   },
 
   root: process.cwd(),
-  publicDir: ".",
+  // publicDir: ".",
+  publicDir: false,
   base: "/",
 
   define: {
