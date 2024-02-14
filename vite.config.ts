@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     virtualHtml({
       pages: {
-        "dist/test/hello.tsx": {
+        "_/test/hello.tsx": {
           template: "/src/clean.html",
           data: {
             script_src: "/test/main.tsx"
