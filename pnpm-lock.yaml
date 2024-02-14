@@ -49,6 +49,9 @@ devDependencies:
   vite-plugin-html-template-mpa:
     specifier: ^1.0.6
     version: 1.0.6
+  vite-plugin-virtual-html:
+    specifier: ^1.1.19
+    version: 1.1.19(@types/node@20.11.17)
 
 packages:
 
@@ -918,6 +921,11 @@ packages:
 
   /concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
+    dev: true
+
+  /connect-history-api-fallback@2.0.0:
+    resolution: {integrity: sha512-U73+6lQFmfiNPrYbXqr6kZ1i1wiRqXnp2nhMsINseWXO8lDau0LGEffJ8kQi4EjLZympVgRdvqjAgiZ1tgzDDA==}
+    engines: {node: '>=0.8'}
     dev: true
 
   /cross-spawn@7.0.3:
@@ -1832,6 +1840,25 @@ packages:
       ejs: 3.1.9
       html-minifier-terser: 7.2.0
       shelljs: 0.8.5
+    dev: true
+
+  /vite-plugin-virtual-html@1.1.19(@types/node@20.11.17):
+    resolution: {integrity: sha512-koAktumApcZNnhpMiRX8peLjHYB+/eA53kyhTlOzOHx0TTLZ2I/ILHKpLfyj0wOFhjBnb6IkTQEbfwxOEz/QGw==}
+    dependencies:
+      connect-history-api-fallback: 2.0.0
+      debug: 4.3.4
+      ejs: 3.1.9
+      fast-glob: 3.3.2
+      vite: 5.1.1(@types/node@20.11.17)
+    transitivePeerDependencies:
+      - '@types/node'
+      - less
+      - lightningcss
+      - sass
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
     dev: true
 
   /vite@5.1.1(@types/node@20.11.17):
