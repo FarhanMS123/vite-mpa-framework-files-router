@@ -40,8 +40,6 @@ export default defineConfig(async () => {
     };
   }
 
-  console.log(pages);
-
   return {
     plugins: [
       // Inspect({
@@ -61,7 +59,8 @@ export default defineConfig(async () => {
         {
           name: "resolve-last-post",
           closeBundle() {
-            // shelljs.mv("-n", join(root, outDir, cache, "/*"), join(root, outDir, "/"));
+            shelljs.mv("-n", join(root, outDir, cache, "/*"), join(root, outDir, "/"));
+            shelljs.rm("-rf", join(root, outDir, cache))
           },
         },
       ],
