@@ -1,82 +1,91 @@
 import { type PluginOption, defineConfig, splitVendorChunkPlugin } from 'vite'
 import react from '@vitejs/plugin-react-swc'
-import process from "process";
 import Inspect from 'vite-plugin-inspect'
 import createInspect from "./src/plugin/inspect";
 
-import { createHtmlPlugin } from 'vite-plugin-html'
-import htmlTemplateMPA from 'vite-plugin-html-template-mpa';
-import htmlTemplate from 'vite-plugin-html-template';
-import virtualHtml from 'vite-plugin-virtual-html';
+import process from "process";
+import { relative, resolve, join } from "path";
+import { existsSync } from "fs";
+import shelljs from "shelljs";
 
-import mpaPlugin from 'vite-plugin-mpa-plus'
-import simpleHtmlPlugin from 'vite-plugin-simple-html';
-import mpa from 'vite-plugin-multi-pages';
+import virtualHtml, { Pages } from 'vite-plugin-virtual-html';
+import { glob } from 'glob';
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [
-    // Inspect({
-    //   build: true,
-    //   outputDir: ".vite-inspect.local",
-    // }),
-    // createInspect("pre"),
-    // createInspect("post"),
+export default defineConfig(async () => {
 
-    htmlTemplateMPA({
-      minify: false,
-      pagesDir: process.cwd(),
-      pages: {
-        "page1": {
-          filename: "test/page-name.page.js.html",
-          template: "src/template/clean.html",
-          inject: {
-            data: {
-              script_src: "/test/page-name.page.js",
-            },
+  const included = ["**/*.html", "**/*.page.tsx", "**/*.page.ts", "**/*.page.js"];
+  const exclude = [".git/**", "*.local/**", "src/**", "dist/**", "node_modules/**"];
+
+  const root = process.cwd();
+  const outDir = "dist";
+  const cache = "_";
+
+  const scan = await glob(included, {
+    cwd: root,
+    nodir: true,
+    ignore: exclude,
+  });
+  const pages: Pages = {};
+
+  for(const absolute of scan) {
+    const rel = relative(root, absolute);
+    const key = join(cache, rel);
+
+    pages[key] = {
+      template: "/src/template/clean.html",
+      data: {
+        script_src: join("/", rel),
+      }
+    };
+  }
+
+  console.log(pages);
+
+  return {
+    plugins: [
+      // Inspect({
+      //   build: true,
+      //   outputDir: ".vite-inspect.local",
+      // }),
+      // createInspect("pre"),
+      // createInspect("post"),
+  
+      virtualHtml({
+        pages,
+      }) as unknown as PluginOption,
+      splitVendorChunkPlugin(),
+      react(),
+
+      [
+        {
+          name: "resolve-last-post",
+          closeBundle() {
+            // shelljs.mv("-n", join(root, outDir, cache, "/*"), join(root, outDir, "/"));
           },
         },
+      ],
+  
+      // createInspect("pre"),
+      // createInspect("post"),
+    ],
+  
+    build: {
+      rollupOptions: {
+        external: /^(.git|.*\.local|dist|node_modules)$/ig,
       },
-    }),
-    
-    // ! NOT WORKING
-    // htmlTemplate.default({
-    //   pagesDir: ".",
-    //   pages: {
-    //     page1: {
-    //       filename: "test/page-name.page.js.html",
-    //       template: "src/template/clean.html",
-    //       title: "/test/page-name.page.js",
-    //     },
-    //   },
-    // }),
-
-    splitVendorChunkPlugin(),
-    react(),
-
-    // createInspect("pre"),
-    // createInspect("post"),
-  ],
-
-  build: {
-    rollupOptions: {
-      input: {
-        "page1": "src/template/clean.html",
-      },
-      external: /^(.git|.*\.local|dist|node_modules)$/ig,
+      outDir,
+      assetsDir: "chunks",
     },
-    outDir: "dist",
-    assetsDir: "chunks",
-  },
-
-  root: process.cwd(),
-  // publicDir: ".",
-  publicDir: false,
-  base: "/",
-
-  define: {
-    __TIME__: new Date().getTime(),
-    "import.meta.env.time": new Date().getTime(),
-    VITE_TIME: new Date().getTime(),
-  },
+  
+    root,
+    publicDir: false,
+    base: "/",
+  
+    define: {
+      __TIME__: new Date().getTime(),
+      "import.meta.env.time": new Date().getTime(),
+      VITE_TIME: new Date().getTime(),
+    },
+  };
 });
