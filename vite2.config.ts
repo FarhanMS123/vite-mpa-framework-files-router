@@ -5,24 +5,38 @@ const defa = defineConfig({
     plugins: [
         {
             name: "just-random",
-            config(config, env) {
-                console.log(config, env);
+            options(options) {
+                console.log("options", options);
             },
-        },
-        virtualHtml({
-            pages: {
-                "/a/b": {
-                    template: "/a/b/c/d.html",
-                },
+            buildStart(options) {
+                console.log("buildStart", options);
             },
-        }),
-        {
-            name: "just-random-2",
-            config(config, env) {
-                console.log(config, env);
+            resolveId(source, importer, options) {
+                console.log("resolveId", source, importer, options);
+            },
+            load(id, options) {
+                console.log("load", id, options);
+            },
+
+            transform(code, id, options) {
+                console.log("transform");
+            },
+            transformIndexHtml: {
+                order: "pre",
+                handler: (html, ctx) => {
+                    console.log("transformIndexHtml-pre");
+                }
             },
         },
     ],
+    build: {
+        rollupOptions: {
+            input: {
+                // "/not/exist/a": "not/exist/a.html",
+                // "/some/exist": "src/index.html",
+            },
+        },
+    },
 });
 
 export default defa;
