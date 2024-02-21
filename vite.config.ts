@@ -19,7 +19,9 @@ export default defineConfig(async () => {
 
   const root = process.cwd();
   const outDir = "dist";
-  const cache = "_";
+  const cache = "";
+
+  // shelljs.mkdir("_");
 
   const scan = await glob(included, {
     cwd: root,
@@ -32,20 +34,22 @@ export default defineConfig(async () => {
     const rel = relative(root, absolute);
     const key = join(cache, rel);
 
-    pages[key] = {
+    pages[key.replace(/\\/ig, "/")] = {
       template: "/src/template/clean.html",
       data: {
-        script_src: join("/", rel),
+        script_src: join("/", rel).replace(/\\/ig, "/"),
       }
     };
   }
 
+  console.log(pages);
+
   return {
     plugins: [
-      // Inspect({
-      //   build: true,
-      //   outputDir: ".vite-inspect.local",
-      // }),
+      Inspect({
+        build: true,
+        outputDir: ".vite-inspect.local",
+      }),
       // createInspect("pre"),
       // createInspect("post"),
   
