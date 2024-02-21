@@ -22,6 +22,24 @@
 page-file.page.tsx -> page-file.html
 ```
 
+## Plugin Research
+
+### MPA Plugins
+- [ ] [IndexXuan/vite-plugin-mpa](https://github.com/IndexXuan/vite-plugin-mpa)
+- [ ] [Miofly/vite-plugin-multi-pages](https://github.com/Miofly/vite-plugin-multi-pages)
+- [ ] [emosheeep/vite-plugin-virtual-mpa](https://github.com/emosheeep/vite-plugin-virtual-mpa)
+- [ ] vite-plugin-multi-pages
+
+### Templating Plugins
+- [ ] vite-plugin-html
+- [ ] vite-plugin-html-template
+- [ ] vite-plugin-html-template-mpa
+- [ ] vite-plugin-simple-html
+- [ ] vite-plugin-virtual-html
+
+### Others
+- [ ] [bripkens/connect-history-api-fallback](https://github.com/bripkens/connect-history-api-fallback)
+
 ## References
 
 - https://vitejs.dev/guide/env-and-mode.html#env-variables
