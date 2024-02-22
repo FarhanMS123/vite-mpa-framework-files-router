@@ -86,64 +86,46 @@ const the_plugin = (order: "post" | "pre") => {
   } as PluginOption;
 };
 
+let a = false;
+
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
     rollupOptions: {
-      input: {
-        "namamama": "src/index.html",
-        // main: "src/other.html",
-        // "simp/megamendung.tsx": "index.html",
-        "simp/megamendung": "src/other.html",
-        // "chunks/main": "src/main.tsx",
-      },
-      output: {
-        // entryFileNames(chunkInfo) {
-        //   console.log("59", chunkInfo);
-        //   return relative(process.cwd(), chunkInfo.facadeModuleId);
-        // },
-        // banner: (chunkInfo) => {
-        //   console.log("63", chunkInfo);
-        //   return "";
-        // },
-        // footer: (chunkInfo) => {
-        //   console.log("67", chunkInfo);
-        //   return "";
-        // },
-        // intro: (chunkInfo) => {
-        //   console.log("75", chunkInfo);
-        //   return "";
-        // },
-        // outro: (chunkInfo) => {
-        //   console.log("79", chunkInfo);
-        //   return "";
-        // },
-        
-        // chunkFileNames: (chunkInfo) => {
-        //   console.log("71", chunkInfo);
-        //   return "";
-        // },
-        // sourcemapFileNames: (chunkInfo) => {
-        //   console.log("71", chunkInfo);
-        //   return "";
-        // },
-      },
+      // input: {
+      //   // "namamama": "src/index.html",
+      //   // main: "src/other.html",
+      //   // "simp/megamendung.tsx": "index.html",
+      //   // "simp/megamendung": "src/other.html",
+      //   // "chunks/main": "src/main.tsx",
+      //   "some/app.tsx": "/src/App.tsx.html",
+      // },
+      input: ["src/App.tsx"],
     },
   },
   // [1734, 2199, 3194, 3682]
   plugins: [
-    // {
-    //   name: "something",
-    //   transformIndexHtml: {
-    //     order: "pre",
-    //     handler: (html) => {
-    //       return html;
-    //       // return html.replace("%SCRIPT_SRC%", "/src/main.tsx");
-    //     },
-    //   },
-    // },
-    the_plugin("pre"),  // 1734
-    the_plugin("post"), // 2199
+    {
+      name: "something",
+      resolveId(source, importer, options) {
+        console.log([source, importer, options]);
+        if (!a) return "App.tsx.html";
+      },
+      load(id, options) {
+        console.log([id, options]);
+        if (!a) {
+          a = true;
+          return `<html>
+<head></head>
+<body>
+<script src="/src/App.tsx" type="module"></script>
+</body>
+</html>`;
+        } 
+      },
+    },
+    // the_plugin("pre"),  // 1734
+    // the_plugin("post"), // 2199
     splitVendorChunkPlugin(),
     react(),
     // the_plugin("pre"),  // 3194
