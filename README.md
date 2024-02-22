@@ -4,6 +4,12 @@
 > Do not reinvent the wheel! Please use from [awesome-vite](https://github.com/vitejs/awesome-vite) or [rollup/awesone](https://github.com/rollup/awesome).
 > You could also find in npm with some convenient naming `vite-plugin-*` or `rollup-plugin-*`.
 
+> [!WARNING]  
+> I hope whatever the final of this project would be, it should not be a library, plugins, or anything. THIS PROJECT SHOULD BE JUST 
+> AND ONLY A TEMPLATE. If there is no plugin could fullfil the objective of this project perfectly, this project would be going as
+> is without being a new plugin. DO NOT REINVENT THE WILL. It is better to just contributing to one of these plugins which are still
+> in research. 
+
 ## TODO
 - [x] No `public`
 - [x] Copy all folders and files except `.dist`, `node_modules`, `src`,  and `.git`
@@ -28,16 +34,21 @@ page-file.page.tsx -> page-file.html
 - [ ] [IndexXuan/vite-plugin-mpa](https://github.com/IndexXuan/vite-plugin-mpa)
 - [ ] [Miofly/vite-plugin-multi-pages](https://github.com/Miofly/vite-plugin-multi-pages)
 - [ ] [emosheeep/vite-plugin-virtual-mpa](https://github.com/emosheeep/vite-plugin-virtual-mpa)
-- [ ] vite-plugin-multi-pages
+- [ ] [zhuweiyou/vite-plugin-mp](https://github.com/zhuweiyou/vite-plugin-mp)
+- [ ] [yzydeveloper/vite-plugin-mpa-plus](https://github.com/yzydeveloper/vite-plugin-mpa-plus)
 
 ### Templating Plugins
-- [ ] vite-plugin-html
-- [ ] vite-plugin-html-template
-- [ ] vite-plugin-html-template-mpa
-- [ ] vite-plugin-simple-html
-- [ ] vite-plugin-virtual-html
+- [ ] [vbenjs/vite-plugin-html](https://github.com/vbenjs/vite-plugin-html)
+- [ ] [IndexXuan/vite-plugin-html-template](https://github.com/IndexXuan/vite-plugin-html-template)
+- [ ] [Miofly/vite-plugin-html-template-mpa](https://github.com/Miofly/vite-plugin-html-template-mpa)
+- [ ] [wojtekmaj/vite-plugin-simple-html](https://github.com/wojtekmaj/vite-plugin-simple-html)
+- [ ] [windsonR/vite-plugin-virtual-html](https://github.com/windsonR/vite-plugin-virtual-html)
+- [ ] [iamspark1e/vite-plugin-auto-mpa-html](https://github.com/iamspark1e/vite-plugin-auto-mpa-html)
+- [ ] [vituum/vite-plugin-handlebars](https://github.com/vituum/vite-plugin-handlebars)
 
 ### Others
+- [ ] [vitejs/vite-plugin-react-pages](https://github.com/vitejs/vite-plugin-react-pages)
+- [ ] [hannoeru/vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages)
 - [ ] [bripkens/connect-history-api-fallback](https://github.com/bripkens/connect-history-api-fallback)
 
 ## References
@@ -46,3 +57,4 @@ page-file.page.tsx -> page-file.html
 - https://vitejs.dev/guide/env-and-mode.html#env-files
 - https://vitejs.dev/guide/env-and-mode.html#html-env-replacement
 - https://github.com/vitejs/awesome-vite#transformers
+- https://vituum.dev/
