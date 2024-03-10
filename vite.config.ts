@@ -17,32 +17,12 @@ export default defineConfig(async () => {
   const included = ["**/*.html", "**/*.page.tsx", "**/*.page.ts", "**/*.page.js"];
   const exclude = [".git/**", "*.local/**", "src/**", "dist/**", "node_modules/**"];
 
-  const root = process.cwd();
-  const outDir = "dist";
   const cache = "";
 
   // shelljs.mkdir("_");
 
-  const scan = await glob(included, {
-    cwd: root,
-    nodir: true,
-    ignore: exclude,
-  });
+  
   const pages: Pages = {};
-
-  for(const absolute of scan) {
-    const rel = relative(root, absolute);
-    const key = join(cache, rel);
-
-    pages[key.replace(/\\/ig, "/")] = {
-      template: "/src/template/clean.html",
-      data: {
-        script_src: join("/", rel).replace(/\\/ig, "/"),
-      }
-    };
-  }
-
-  console.log(pages);
 
   return {
     plugins: [
@@ -53,21 +33,31 @@ export default defineConfig(async () => {
       // createInspect("pre"),
       // createInspect("post"),
   
-      virtualHtml({
-        pages,
-      }) as unknown as PluginOption,
-      splitVendorChunkPlugin(),
-      react(),
-
       [
         {
-          name: "resolve-last-post",
-          closeBundle() {
-            shelljs.mv("-n", join(root, outDir, cache, "/*"), join(root, outDir, "/"));
-            shelljs.rm("-rf", join(root, outDir, cache))
+          name: "vite-mpa-builtin",
+          async config(config, env) {
+            const scan = await glob(included, {
+              cwd: config.root,
+              nodir: true,
+              ignore: exclude,
+            });
+            for(const absolute of scan) {
+              const rel = relative(config.root, absolute);
+              const key = join(cache, rel);
+          
+              pages[key.replace(/\\/ig, "/")] = {
+                template: "/src/template/clean.html",
+                data: {
+                  script_src: join("/", rel).replace(/\\/ig, "/"),
+                }
+              };
+            }
           },
-        },
+        }
       ],
+      splitVendorChunkPlugin(),
+      react(),
   
       // createInspect("pre"),
       // createInspect("post"),
@@ -77,11 +67,11 @@ export default defineConfig(async () => {
       rollupOptions: {
         external: /^(.git|.*\.local|dist|node_modules)$/ig,
       },
-      outDir,
+      outDir: "dist",
       assetsDir: "chunks",
     },
   
-    root,
+    root: process.cwd(),
     publicDir: false,
     base: "/",
   

@@ -30,12 +30,39 @@ page-file.page.tsx -> page-file.html
 
 ## Plugin Research
 
+### What to find?
+- How pagination works
+- What would it do to clean it mess
+- What would it do to end the builds
+- How `data` can be set
+- search word `data` on source code. It could be shown to the near of the beginning
+
 ### MPA Plugins
 - [ ] [IndexXuan/vite-plugin-mpa](https://github.com/IndexXuan/vite-plugin-mpa)
+  - primaryly using `connect-history-api-fallback`, `fast-glob`
+  - additionally using `yargs`, `shelljs`
+  - setting config using `config.` instead of `return config`
+  - `shelljs` used to move and remove `.html` files
+  - purpose to find main js file and use the 
+  - ~great to proof read further~
+  - there exists `index.html` in every pagination, so not much what I see.
+  - no `data` manipulation
 - [ ] [Miofly/vite-plugin-multi-pages](https://github.com/Miofly/vite-plugin-multi-pages)
+  - It looks same as above, but no `shelljs` and no removing
 - [ ] [emosheeep/vite-plugin-virtual-mpa](https://github.com/emosheeep/vite-plugin-virtual-mpa)
+  - additionally using `html-minifier-terser`, `picocolors`, `ejs`, `fs`, `connect-history-api-fallback`
+  - using `fs.readdir` to do traverse files
+  - template html on root, and traversing js
+  - https://vitejs.dev/guide/api-plugin.html#virtual-modules-convention
+  - `resolveId` is absolute path
+  - creating virtual module
 - [ ] [zhuweiyou/vite-plugin-mp](https://github.com/zhuweiyou/vite-plugin-mp)
+  - using `glob`
+  - only MPA without virtualization
+  - only mergeConfig
 - [ ] [yzydeveloper/vite-plugin-mpa-plus](https://github.com/yzydeveloper/vite-plugin-mpa-plus)
+  - additionally using `ejs`, `connect-history-api-fallback`, `fs`, `node-html-parser`
+  - user provide list of index.html
 
 ### Templating Plugins
 - [ ] [vbenjs/vite-plugin-html](https://github.com/vbenjs/vite-plugin-html)
