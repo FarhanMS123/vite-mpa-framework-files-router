@@ -2,9 +2,10 @@ import { type PluginOption, type UserConfig } from "vite";
 import { type GlobOptionsWithFileTypesUnset, glob } from "glob";
 import { relative, resolve, join } from "path";
 import { existsSync, mkdirSync, copyFileSync } from "fs";
+import process from "process";
 
-export const defaultExcluded = [".git", "*.local", "src", "dist", "node_modules"];
-export const defaultIncluded = [".html", ".page.tsx", ".page.ts", ".page.js"];
+export const defaultExcluded = ["**/.git", "**/*.local", "**/src", "**/dist", "**/node_modules"];
+export const defaultIncluded = ["**/*.html", "**/*.page.tsx", "**/*.page.ts", "**/*.page.js"];
 export const extendedIncluded = [".html", ".page.tsx", ".page.vue", ".md", ".page.ts", ".page.js"];
 export const pattern = (excluded: string[], included: string[]) => `!(${ excluded.join("|") })/**/*@(${ included.join("|") })`;
 
@@ -92,21 +93,27 @@ export const traversFiles = async (params?: {
     ] as PluginOption;
 };
 
-export type InputRaw = {
-    path: string;
-    raw: string;
-};
-export type InputFunc = ({ id, script_src, out }: {
+export type InputValue = {
     id: string;
+    raw: string;
     script_src: string;
     out: string;
-}) => InputRaw;
+};
+export type InputFunc = ({ input, id, raw, script_src, out }: {
+    input: InputValue;
+} & InputValue) => InputValue;
 export type InputSources = {
-    [glob: string]: {
-        html: string | InputRaw;
-        script: string | InputRaw;
-        out: string;
-    };
+    [id: string]: InputValue;
+};
+export type Option = {
+    scanDir?: string;
+    root?: string;
+    included?: string[];
+    excluded?: string[];
+    pages?: {
+        [glob: string]: InputFunc;
+    }[];
+    glob_opts?: GlobOptionsWithFileTypesUnset;
 };
 
 export const PREFIX = "\0virtual:" as const;
@@ -124,14 +131,50 @@ export const script_vue = `import { createApp } from 'vue'
 import App from '%SCRIPT_SRC%'
 createApp(App).mount('#app')`;
 
-export const virtualRouter = async () => {
-    const input = {};
+export const virtualRouter = async (opts: Option) => {
+    const { glob_opts } = opts;
+    let { root, scanDir, included, excluded } = opts;
+    scanDir = scanDir ?? "src";
+    included = included ?? defaultIncluded;
+    excluded = excluded ?? defaultExcluded;
+
+    const input: InputSources = {};
+
+    // store every glob to input by key `${PREFIX}${filename}`
+    // for whenever a file is traversed, it going check the microatch
+    // then if want to add modules like vue, it should override input
 
     return [
         {
             name: "vite-virtual-router",
             async config(config, env) {
-                //
+                config.root = config.root ?? process.cwd();
+                root = root ?? config.root;
+
+                config.build ??= {};
+                config.build.rollupOptions ??= {};
+                config.build.rollupOptions.input ??= [];
+                const cbro_input = config.build.rollupOptions.input;
+
+                const files = await glob(included, {
+                    cwd: root,
+                    ignore: excluded,
+                    nodir: true,
+                    ...glob_opts,
+                });
+
+                for (const filename of files) {
+                    const virtual = `${PREFIX}${filename}`;
+                    if (Array.isArray(cbro_input)) cbro_input.push(virtual);
+                        else cbro_input[virtual] = virtual;
+                    
+                    input[virtual] = {
+                        id: virtual,
+                        raw: html,
+                        script_src: filename,
+                        out: `${filename}/index.html`
+                    };
+                }
             },
             resolveId(source, importer, options) {
                 //
