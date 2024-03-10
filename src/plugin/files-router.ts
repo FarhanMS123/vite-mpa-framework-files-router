@@ -91,3 +91,57 @@ export const traversFiles = async (params?: {
         },
     ] as PluginOption;
 };
+
+export type InputRaw = {
+    path: string;
+    raw: string;
+};
+export type InputFunc = ({ id, script_src, out }: {
+    id: string;
+    script_src: string;
+    out: string;
+}) => InputRaw;
+export type InputSources = {
+    [glob: string]: {
+        html: string | InputRaw;
+        script: string | InputRaw;
+        out: string;
+    };
+};
+
+export const PREFIX = "\0virtual:" as const;
+export const html = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <script type="module" src="%SCRIPT_SRC%"></script>
+  </body>
+</html>`;
+export const script_vue = `import { createApp } from 'vue'
+import App from '%SCRIPT_SRC%'
+createApp(App).mount('#app')`;
+
+export const virtualRouter = async () => {
+    const input = {};
+
+    return [
+        {
+            name: "vite-virtual-router",
+            async config(config, env) {
+                //
+            },
+            resolveId(source, importer, options) {
+                //
+            },
+            load(id, options) {
+                //
+            },
+            closeBundle() {
+                //
+            },
+        }
+    ] as PluginOption;
+};
