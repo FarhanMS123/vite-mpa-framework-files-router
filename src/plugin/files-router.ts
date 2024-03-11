@@ -4,6 +4,7 @@ import micromatch from "micromatch";
 import { relative, resolve, join } from "path";
 import { existsSync, mkdirSync, copyFileSync } from "fs";
 import process from "process";
+import { inspect } from "util";
 
 export const defaultExcluded = [".git/**", "*.local/**", "src/**", "dist/**", "node_modules/**"];
 export const defaultIncluded = ["**/*.html", "**/*.page.tsx", "**/*.page.ts", "**/*.page.js"];
@@ -95,12 +96,11 @@ export const traversFiles = async (params?: {
 };
 
 export type InputValue = {
-    id: string;
     raw: string;
     script_src: string;
     out: string;
 };
-export type InputFunc = ({ config, env, input, id, raw, script_src, out }: {
+export type InputFunc = ({ config, env, input, raw, script_src, out }: {
     config: UserConfig;
     env: ConfigEnv;
     input: Record<string, InputValue>;
@@ -119,6 +119,7 @@ export type Option = {
 };
 
 export const PREFIX = "\0virtual:" as const;
+export const symNull = Symbol(null);
 export const html = `<!doctype html>
 <html lang="en">
   <head>
@@ -135,11 +136,12 @@ createApp(App).mount('#app')`;
 
 export const virtualRouter = async (opts?: Option) => {
     opts ??= {};
-    const { glob_opts, pages } = opts;
-    let { scanDir, included, excluded } = opts;
+    const { glob_opts } = opts;
+    let { scanDir, included, excluded, pages } = opts;
     scanDir ??= "src";
     included ??= defaultIncluded;
     excluded ??= defaultExcluded;
+    pages ??= [];
 
     let root: string, files: string[];
     const input: InputSources = {};
@@ -170,23 +172,23 @@ export const virtualRouter = async (opts?: Option) => {
                 for (let filename of files) {
                     filename = relative(root, filename);
                     filename = filename.replaceAll(/\\/g, "/");
-                    const virtual = `${PREFIX}${filename}/index.html`;
                     
-                    input[virtual] = {
-                        id: virtual,
+                    const _input= {
                         raw: html,
                         script_src: filename,
                         out: `${filename}/index.html`
                     };
 
+                    let v: ReturnType<InputFunc>;
+
                     for (const p of pages) {
                         const [g, f] = Object.entries(p)[0];
-                        let v: ReturnType<InputFunc>;
-                        if (micromatch.isMatch(filename, g) && (v = f({ config, env, input, ...input[virtual] })) ) {
-                            input[virtual] = v;
+                        if (micromatch.isMatch(filename, g) && (v = f({ config, env, input, ..._input })) )
                             break;
-                        }
                     }
+
+                    const virtual = `${PREFIX}${v ? v.out : _input.out}`;
+                    input[virtual] = v ? v : _input;
                 }
 
                 for (const [id, v] of Object.entries(input)) {
@@ -195,10 +197,14 @@ export const virtualRouter = async (opts?: Option) => {
                 }
             },
             resolveId(source, importer, options) {
-                //
+                return input[source]?.out ?? source;
             },
             load(id, options) {
-                //
+                const _input = input[`${PREFIX}${id}`];
+                let raw = _input?.raw;
+                if (!_input) return;
+                raw = raw.replaceAll(/%SCRIPT_SRC%/ig, _input.script_src);
+                return raw;
             },
             closeBundle() {
                 //

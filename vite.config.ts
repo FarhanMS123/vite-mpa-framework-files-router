@@ -22,8 +22,9 @@ export default defineConfig({
       {
         name: "vite-showing-config",
         config(config, env) {
-          inspect(config, true, Infinity);
-          process.exit();
+          delete config.plugins;
+          // console.log(inspect(config, true, Infinity));
+          // process.exit();
         },
       }
     ],
