@@ -1,5 +1,9 @@
 import { PREFIX, type InputFunc, InputValue, Option } from "./files-router";
 
+export const beNoFolder: InputFunc = ({ current }) => {
+    current.out = current.script_src + ".html";
+};
+
 export const pattern_html = "**/*.html";
 export const loadHtml: InputFunc = ({ input, script_src }) => {
     input[script_src] = {

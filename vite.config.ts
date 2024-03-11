@@ -10,19 +10,21 @@ import { inspect } from "util";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    Inspect({
-      build: true,
-      outputDir: ".vite-inspect.local",
-    }),
+    // Inspect({
+    //   build: true,
+    //   outputDir: ".vite-inspect.local",
+    // }),
     // createInspect("pre"),
     // createInspect("post"),
     
-    virtualRouter(),
+    virtualRouter({
+      scanDir: ".",
+    }),
     [
       {
         name: "vite-showing-config",
         config(config, env) {
-          delete config.plugins;
+          // delete config.plugins;
           // console.log(inspect(config, true, Infinity));
           // process.exit();
         },
@@ -37,7 +39,7 @@ export default defineConfig({
 
   build: {
     rollupOptions: {
-      external: /^(.git|.*\.local|dist|node_modules)$/ig,
+      external: /^(.git|.*\.local|dist|node_modules|\.html)$/ig,
     },
     outDir: "dist",
     assetsDir: "chunks",

@@ -1,7 +1,7 @@
 import { type ConfigEnv, type PluginOption, type UserConfig } from "vite";
 import { type GlobOptionsWithFileTypesUnset, glob } from "glob";
 import micromatch from "micromatch";
-import { relative } from "path";
+import { relative, join } from "path";
 import process from "process";
 import { inspect } from "util";
 import { defaultExcluded, defaultIncluded, defaultPages } from "./templates";
@@ -15,6 +15,7 @@ export type InputFunc = ({ config, env, input, raw, script_src, out }: {
     config: UserConfig;
     env: ConfigEnv;
     input: Record<string, InputValue>;
+    current: InputValue;
 } & InputValue) => InputValue | null | void;
 export type InputSources = {
     [id: string]: InputValue;
@@ -67,7 +68,7 @@ export const virtualRouter = async (opts?: Option) => {
                 const cbro_input = config.build.rollupOptions.input;
 
                 files = await glob(included, {
-                    cwd: root,
+                    cwd: join(root, scanDir),
                     ignore: excluded,
                     nodir: true,
                     ...glob_opts,
@@ -87,7 +88,7 @@ export const virtualRouter = async (opts?: Option) => {
 
                     for (const p of pages) {
                         const [g, f] = Object.entries(p)[0];
-                        if (micromatch.isMatch(filename, g) && (v = f({ config, env, input, ..._input })) )
+                        if (micromatch.isMatch(filename, g) && (v = f({ config, env, current: _input, input, ..._input })) )
                             break;
                     }
 
