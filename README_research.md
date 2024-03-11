@@ -115,6 +115,25 @@ page-file.page.tsx -> page-file.html
 - [ ] [hannoeru/vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages)
 - [ ] [bripkens/connect-history-api-fallback](https://github.com/bripkens/connect-history-api-fallback)
 
+## Renaming Solution
+
+```bash
+filename.levelA.levelB.levelC.levelD.ext
+# >= 2
+
+filename
+filename_ext
+filename.levelA.levelB.levelC.levelD.ext
+filename_ext_levelD
+filename_ext_levelD_levelC
+filename_ext_levelD_levelC_levelB
+filename_ext_levelD_levelC_levelB_levelA
+filename_ext_levelD_levelC_levelB_#
+filename_ext_levelD_levelC_#
+filename_ext_levelD_#
+filename_ext_#
+```
+
 ## References
 
 - https://vitejs.dev/guide/env-and-mode.html#env-variables

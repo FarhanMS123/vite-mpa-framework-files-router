@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { type ConfigEnv, type PluginOption, type UserConfig } from "vite";
 import { type GlobOptionsWithFileTypesUnset, glob } from "glob";
 import micromatch from "micromatch";
@@ -32,6 +33,7 @@ export type Option = {
 };
 
 export const PREFIX = "\0virtual-router-prefix:" as const;
+/// @ts-ignore
 export const symNull = Symbol(null);
 export const html = readFileSync("../template/minimal.html").toString();
 
@@ -60,8 +62,8 @@ export const virtualRouter = async (opts?: Option) => {
                 config.build.rollupOptions.input ??= [];
                 const cbro_input = config.build.rollupOptions.input;
 
-                files = await glob(included, {
-                    cwd: join(root, scanDir),
+                files = await glob(included!, {
+                    cwd: join(root, scanDir!),
                     ignore: excluded,
                     nodir: true,
                     ...glob_opts,
@@ -78,12 +80,14 @@ export const virtualRouter = async (opts?: Option) => {
                     };
 
                     /**
-                     * current can use to modify _input without need 
+                     * `current` can use to modify _input without need 
                      * to return, which would continue to execute.
+                     * `config` can also be modified by users without
+                     * creating new plugins.
                      */
 
-                    let v: ReturnType<InputFunc>;
-                    for (const p of pages) {
+                    let v: ReturnType<InputFunc> = null;
+                    for (const p of pages!) {
                         const [g, f] = Object.entries(p)[0];
                         if (micromatch.isMatch(filename, g) && (v = f({ config, env, current: _input, input, ..._input })) )
                             break;
@@ -104,8 +108,9 @@ export const virtualRouter = async (opts?: Option) => {
                     input[virtual] = v ? v : _input;
                 }
 
-                for (const [id, v] of Object.entries(input)) {
+                for (const [id, ] of Object.entries(input)) {
                     if (Array.isArray(cbro_input)) cbro_input.push(id);
+                        /// @ts-ignore
                         else cbro_input[id] = id;
                 }
             },
