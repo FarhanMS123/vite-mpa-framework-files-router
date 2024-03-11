@@ -16,7 +16,7 @@
 ## Usage
 
 1. Please initialize Vite using [official guidelines](https://vitejs.dev/guide/#scaffolding-your-first-vite-project)
-2. Remove `src/` and `public/` (recommended)
+2. Remove `src/`, `index.html`, and `public/` (recommended)
 3. Copy `src/` from this project to your workdir
 4. Install dependencies below as devDependencies
 
