@@ -1,5 +1,7 @@
+import { readFileSync } from "fs";
 import { PREFIX, type InputFunc, InputValue, Option } from "./files-router";
 
+export const pattern_no_folder = "**";
 export const beNoFolder: InputFunc = ({ current }) => {
     current.out = current.script_src + ".html";
 };
@@ -15,9 +17,7 @@ export const loadHtml: InputFunc = ({ input, script_src }) => {
 }
 
 export const pattern_vue = "**/*.page.vue";
-export const script_vue = `import { createApp } from 'vue'
-import App from '%SCRIPT_SRC%'
-createApp(App).mount('#app')`;
+export const script_vue = readFileSync("../utils/main_vue.tsx").toString();
 export const loadVue: InputFunc = ({ input, script_src, out, raw }) => {
     const _input: InputValue = {
         raw: script_vue,
@@ -39,6 +39,7 @@ export const defaultIncluded = [pattern_html, "**/*.page.tsx", "**/*.page.ts", "
 export const extendedIncluded = ["**/*.html", "**/*.page.tsx", pattern_vue, "**/*.md", "**/*.page.ts", "**/*.page.js"];
 
 export const defaultPages: Option["pages"] = [
+    { [pattern_no_folder]: beNoFolder, },
     { [pattern_html]: loadHtml, },
     { [pattern_vue]: loadVue, },
 ];

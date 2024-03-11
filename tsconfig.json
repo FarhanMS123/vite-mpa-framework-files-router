@@ -22,6 +22,7 @@
     "baseUrl": ".",
   },
   "include": ["."],
+  "exclude": ["src/utils/main_**"],
   "references": [{
     "path": "./tsconfig.node.json"
   }]

@@ -46,7 +46,7 @@ export default defineConfig({
   },
 
   root: process.cwd(),
-  publicDir: false,
+  publicDir: ".",
   base: "/",
 
   define: {

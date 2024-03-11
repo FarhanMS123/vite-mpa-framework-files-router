@@ -3,6 +3,7 @@ import { type GlobOptionsWithFileTypesUnset, glob } from "glob";
 import micromatch from "micromatch";
 import { relative, join } from "path";
 import process from "process";
+import { readFileSync } from "fs";
 import { inspect } from "util";
 import { defaultExcluded, defaultIncluded, defaultPages } from "./templates";
 
@@ -30,23 +31,15 @@ export type Option = {
     glob_opts?: GlobOptionsWithFileTypesUnset;
 };
 
-export const PREFIX = "\0virtual:" as const;
+export const PREFIX = "\0virtual-router-prefix:" as const;
 export const symNull = Symbol(null);
-export const html = `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  </head>
-  <body>
-    <script type="module" src="%SCRIPT_SRC%"></script>
-  </body>
-</html>`;
+export const html = readFileSync("../template/minimal.html").toString();
 
 export const virtualRouter = async (opts?: Option) => {
     opts ??= {};
     const { glob_opts } = opts;
     let { scanDir, included, excluded, pages } = opts;
+
     scanDir ??= "src";
     included ??= defaultIncluded;
     excluded ??= defaultExcluded;
@@ -84,14 +77,26 @@ export const virtualRouter = async (opts?: Option) => {
                         out: `${filename}/index.html`
                     };
 
-                    let v: ReturnType<InputFunc>;
+                    /**
+                     * current can use to modify _input without need 
+                     * to return, which would continue to execute.
+                     */
 
+                    let v: ReturnType<InputFunc>;
                     for (const p of pages) {
                         const [g, f] = Object.entries(p)[0];
                         if (micromatch.isMatch(filename, g) && (v = f({ config, env, current: _input, input, ..._input })) )
                             break;
                     }
 
+                    /**
+                     * This allow user to set custom key directly, and ask
+                     * importer to not storing current file configuration.
+                     * ```
+                     * input["custom_file_path"] = { out: null }
+                     * return input["custom_file_path"];
+                     * ```
+                     */
                     const out = v ? v.out : _input.out;
                     if (out == null) continue;
 
@@ -104,9 +109,22 @@ export const virtualRouter = async (opts?: Option) => {
                         else cbro_input[id] = id;
                 }
             },
+
+            /**
+             * A literal modules must have no PREFIX on the key
+             * and has `null` in the `out`put. As such condition meet,
+             * it would going with source.
+             */
             resolveId(source, importer, options) {
                 return input[source]?.out ?? source;
             },
+
+            /**
+             * This only load virtual prefix.
+             * After input constructed, user can define new input without prefix
+             * and decide `out`put as `null`. This load would not process any key
+             * that is not use PREFIX.
+             */
             load(id, options) {
                 const _input = input[`${PREFIX}${id}`];
                 let raw = _input?.raw;
