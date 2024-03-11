@@ -14,6 +14,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@types/micromatch": "^4.0.6",
     "@types/node": "^20.10.6",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
@@ -26,18 +27,10 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "glob": "^10.3.10",
     "micromatch": "^4.0.5",
-    "mustache": "^4.2.0",
     "shelljs": "^0.8.5",
     "tsx": "^4.7.1",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
-    "vite-plugin-html": "^3.2.2",
-    "vite-plugin-html-template": "^1.2.2",
-    "vite-plugin-html-template-mpa": "^1.0.6",
-    "vite-plugin-inspect": "^0.8.1",
-    "vite-plugin-mpa-plus": "^0.5.4",
-    "vite-plugin-multi-pages": "^0.0.14",
-    "vite-plugin-simple-html": "^0.1.2",
-    "vite-plugin-virtual-html": "^1.1.19"
+    "vite-plugin-inspect": "^0.8.1"
   }
 }

@@ -1,10 +1,11 @@
-import { type PluginOption, type UserConfig } from "vite";
+import { type ConfigEnv, type PluginOption, type UserConfig } from "vite";
 import { type GlobOptionsWithFileTypesUnset, glob } from "glob";
+import micromatch from "micromatch";
 import { relative, resolve, join } from "path";
 import { existsSync, mkdirSync, copyFileSync } from "fs";
 import process from "process";
 
-export const defaultExcluded = ["**/.git", "**/*.local", "**/src", "**/dist", "**/node_modules"];
+export const defaultExcluded = [".git/**", "*.local/**", "src/**", "dist/**", "node_modules/**"];
 export const defaultIncluded = ["**/*.html", "**/*.page.tsx", "**/*.page.ts", "**/*.page.js"];
 export const extendedIncluded = [".html", ".page.tsx", ".page.vue", ".md", ".page.ts", ".page.js"];
 export const pattern = (excluded: string[], included: string[]) => `!(${ excluded.join("|") })/**/*@(${ included.join("|") })`;
@@ -99,15 +100,16 @@ export type InputValue = {
     script_src: string;
     out: string;
 };
-export type InputFunc = ({ input, id, raw, script_src, out }: {
-    input: InputValue;
-} & InputValue) => InputValue;
+export type InputFunc = ({ config, env, input, id, raw, script_src, out }: {
+    config: UserConfig;
+    env: ConfigEnv;
+    input: Record<string, InputValue>;
+} & InputValue) => InputValue | null | void;
 export type InputSources = {
     [id: string]: InputValue;
 };
 export type Option = {
     scanDir?: string;
-    root?: string;
     included?: string[];
     excluded?: string[];
     pages?: {
@@ -131,13 +133,15 @@ export const script_vue = `import { createApp } from 'vue'
 import App from '%SCRIPT_SRC%'
 createApp(App).mount('#app')`;
 
-export const virtualRouter = async (opts: Option) => {
-    const { glob_opts } = opts;
-    let { root, scanDir, included, excluded } = opts;
-    scanDir = scanDir ?? "src";
-    included = included ?? defaultIncluded;
-    excluded = excluded ?? defaultExcluded;
+export const virtualRouter = async (opts?: Option) => {
+    opts ??= {};
+    const { glob_opts, pages } = opts;
+    let { scanDir, included, excluded } = opts;
+    scanDir ??= "src";
+    included ??= defaultIncluded;
+    excluded ??= defaultExcluded;
 
+    let root: string, files: string[];
     const input: InputSources = {};
 
     // store every glob to input by key `${PREFIX}${filename}`
@@ -149,24 +153,24 @@ export const virtualRouter = async (opts: Option) => {
             name: "vite-virtual-router",
             async config(config, env) {
                 config.root = config.root ?? process.cwd();
-                root = root ?? config.root;
+                root = config.root;
 
                 config.build ??= {};
                 config.build.rollupOptions ??= {};
                 config.build.rollupOptions.input ??= [];
                 const cbro_input = config.build.rollupOptions.input;
 
-                const files = await glob(included, {
+                files = await glob(included, {
                     cwd: root,
                     ignore: excluded,
                     nodir: true,
                     ...glob_opts,
                 });
 
-                for (const filename of files) {
-                    const virtual = `${PREFIX}${filename}`;
-                    if (Array.isArray(cbro_input)) cbro_input.push(virtual);
-                        else cbro_input[virtual] = virtual;
+                for (let filename of files) {
+                    filename = relative(root, filename);
+                    filename = filename.replaceAll(/\\/g, "/");
+                    const virtual = `${PREFIX}${filename}/index.html`;
                     
                     input[virtual] = {
                         id: virtual,
@@ -174,6 +178,20 @@ export const virtualRouter = async (opts: Option) => {
                         script_src: filename,
                         out: `${filename}/index.html`
                     };
+
+                    for (const p of pages) {
+                        const [g, f] = Object.entries(p)[0];
+                        let v: ReturnType<InputFunc>;
+                        if (micromatch.isMatch(filename, g) && (v = f({ config, env, input, ...input[virtual] })) ) {
+                            input[virtual] = v;
+                            break;
+                        }
+                    }
+                }
+
+                for (const [id, v] of Object.entries(input)) {
+                    if (Array.isArray(cbro_input)) cbro_input.push(id);
+                        else cbro_input[id] = id;
                 }
             },
             resolveId(source, importer, options) {
