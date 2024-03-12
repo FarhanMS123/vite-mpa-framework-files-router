@@ -134,6 +134,22 @@ filename_ext_levelD_#
 filename_ext_#
 ```
 
+```bash
+filename.page.tsx
+filename.idA.ext
+filename.levelA.levelB.levelC.idA.idB.idC.ext
+# >= 2
+
+filename.levelA.levelB.levelC
+filename.levelA.levelB.levelC_ext
+filename.levelA.levelB.levelC_ext_idC
+filename.levelA.levelB.levelC_ext_idC_idB
+filename.levelA.levelB.levelC_ext_idC_idB_idA
+filename.levelA.levelB.levelC_ext_idC_idB_#
+filename.levelA.levelB.levelC_ext_idC_#
+filename.levelA.levelB.levelC_ext_#
+```
+
 ## References
 
 - https://vitejs.dev/guide/env-and-mode.html#env-variables
