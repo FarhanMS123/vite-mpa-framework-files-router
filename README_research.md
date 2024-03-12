@@ -168,3 +168,7 @@ filename.levelA.levelB.levelC_ext_#
 - https://vitejs.dev/guide/env-and-mode.html#html-env-replacement
 - https://github.com/vitejs/awesome-vite#transformers
 - https://vituum.dev/
+- https://github.com/isaacs/node-glob?tab=readme-ov-file#glob-primer
+- https://www.linuxjournal.com/content/pattern-matching-bash
+- https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html
+- KEYWORD: man bash pattern matching
