@@ -150,6 +150,17 @@ filename.levelA.levelB.levelC_ext_idC_#
 filename.levelA.levelB.levelC_ext_#
 ```
 
+```bash
+filename.levelA.levelB.levelC.idA.idB.idC.ext
+filename.*.page.ext
+# >= 2
+
+filename.levelA.levelB.levelC
+filename.levelA.levelB.levelC_ext
+filename.levelA.levelB.levelC.idA.idB.idC.ext     # this should be last resorts.
+filename.levelA.levelB.levelC_ext_#
+```
+
 ## References
 
 - https://vitejs.dev/guide/env-and-mode.html#env-variables
