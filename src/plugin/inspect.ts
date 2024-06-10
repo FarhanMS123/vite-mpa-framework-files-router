@@ -1,14 +1,15 @@
-import { type PluginOption } from 'vite'
+import { UserConfig, type PluginOption } from 'vite'
 import process from "process";
 import { writeFileSync, existsSync, mkdirSync } from "fs";
 import { inspect } from "util";
 
-if (!existsSync("./.inspect.local")) mkdirSync("./.inspect.local");
-
-export const makeCache = (name: string, data: unknown) => writeFileSync(
-    `${process.cwd()}/.inspect.local/${new Date().getTime()}_${name}.js`, 
-    `(${ inspect(data, true, Infinity, false) })`
-);
+export const makeCache = (name: string, data: unknown) => {
+    if (!existsSync("./.inspect.local")) mkdirSync("./.inspect.local");
+    return writeFileSync(
+        `${process.cwd()}/.inspect.local/${new Date().getTime()}_${name}.js`, 
+        `(${ inspect(data, true, Infinity, false) })`
+    )
+};
 
 let pos = 1000;
 
@@ -42,3 +43,11 @@ export default function createInspect(order: "post" | "pre") {
         },
     } as PluginOption;
 }
+
+export const showConfig = [{
+    name: "vite-show-config",
+    config(config, env) {
+        const c = {...config, plugins: []} as UserConfig;
+        console.log(inspect(c, true, Infinity));
+    },
+}] as PluginOption;

@@ -9,5 +9,5 @@
     "strict": true
   },
   "include": ["vite.config.ts", "src", "."],
-  "exclude": ["src/utils/main_**"]
+  "exclude": ["src/utils/**"]
 }

@@ -1,15 +1,22 @@
-import { type PluginOption, defineConfig, splitVendorChunkPlugin } from 'vite'
+import { PluginOption, defineConfig, splitVendorChunkPlugin } from 'vite'
 import react from '@vitejs/plugin-react-swc'
-
-import process from "process";
-import { virtualRouter } from './src/plugin/files-router';
+import { virtualRouter } from './src/plugin/files-router'
+import DynamicPublicDirectory from "./src/vite-multiple-assets"
+import { defaultExcluded } from './src/plugin/templates'
+import { showConfig } from './src/plugin/inspect'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    virtualRouter({
+    // showConfig,
+    DynamicPublicDirectory(["./**"], {
+       ignore: [...defaultExcluded],
+    }) as unknown as PluginOption,
+    showConfig,
+    /* virtualRouter({
       scanDir: ".",
-    }),
+      excluded: [...defaultExcluded]
+    }), */
     splitVendorChunkPlugin(),
     react(),
   ],
@@ -23,6 +30,6 @@ export default defineConfig({
   },
 
   root: process.cwd(),
-  publicDir: ".",
+  publicDir: false,
   base: "/",
 });
