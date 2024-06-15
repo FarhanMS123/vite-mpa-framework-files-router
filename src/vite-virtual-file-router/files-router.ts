@@ -1,20 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { type ConfigEnv, type PluginOption, type UserConfig } from "vite";
-import { type GlobOptionsWithFileTypesUnset, glob } from "glob";
-import micromatch from "micromatch";
-import { relative, join } from "path";
-import process from "process";
-import { readFileSync } from "fs";
-import { defaultExcluded, defaultIncluded, defaultPages } from "./templates";
-
-export type IViteConfig = Exclude<NonNullable<PluginOption>, false | PluginOption[] | Promise<PluginOption>>;
-export type LoadResultRet = NonNullable<IViteConfig["load"]>;
 
 export type InputValue = {
-    raw: RawFunc;
-    virtuals: Record<string, string>; // { SCRIPT_SRC: file_relative }
-    labels: Record<string, unknown>
     out: string;
+    raw: RawFunc;
+    labels: Record<string, unknown>
+    virtuals: Record<string, string>; // { SCRIPT_SRC: file_relative }
 };
 export type RawFunc = (params: {
     config: UserConfig;
@@ -22,9 +13,7 @@ export type RawFunc = (params: {
     input: Record<string, InputValue>;
     current: InputValue;
 }) => string | undefined;
-export type InputSources = {
-    [id: string]: InputValue;
-};
+export type InputSources = Record<string, InputValue>; // { id: InputValue }
 export type Option = {
     files: InputValue[];
 };
@@ -32,8 +21,7 @@ export type Option = {
 export const PREFIX = "\0vvfr-pre:" as const; // vvfr-pre
 
 export const virtualRouter = async ({ files }: Option) => {
-
-    let root: string, config: UserConfig, env: ConfigEnv;
+    let config: UserConfig, env: ConfigEnv;
     const input: InputSources = {};
 
     return [
@@ -51,10 +39,7 @@ export const virtualRouter = async ({ files }: Option) => {
                 for (let filename of files) {
                     const virtual = `${PREFIX}${filename.out}`;
                     input[virtual] = filename;
-                }
-
-                for (const id of Object.keys(input)) {
-                    if (Array.isArray(cbro_input)) cbro_input.push(id);
+                    if (Array.isArray(cbro_input)) cbro_input.push(virtual);
                         /// @ts-ignore
                         else cbro_input[id] = id;
                 }
@@ -80,7 +65,7 @@ export const virtualRouter = async ({ files }: Option) => {
                 let raw = _input?.raw?.({ config, env, current: _input, input });
                 if (!raw) return;
                 for (const [SCRIPT_SRC, file_relative] of Object.entries(_input.virtuals)) {
-                    raw = raw.replaceAll(RegExp(`%${SCRIPT_SRC}%`, "ig"), file_relative);
+                    raw = raw.replaceAll(RegExp(`%${SCRIPT_SRC}%`, "ig"), `${PREFIX}${file_relative}`);
                 }
                 return raw;
             },

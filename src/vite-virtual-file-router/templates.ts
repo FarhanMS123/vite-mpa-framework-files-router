@@ -71,6 +71,10 @@ export const defaultExcluded = [".git/**", "*.local/**", "src/**", "dist/**", "n
 export const defaultIncluded = [pattern_html, "**.page.tsx", "**.page.ts", "**.page.js"];
 export const extendedIncluded = ["**.html", "**.page.tsx", pattern_vue, "**.md", "**.page.ts", "**.page.js"];
 
+// html
+// js, jsm, jsx, ts, tsm, tsx, -> html, **
+// vue, svelte -> html, ts, **
+
 export const defaultPages: Option["pages"] = [
     { [pattern_no_folder]: beFolderNoConflict, },
     { [pattern_index]: beIndex, },
