@@ -7,107 +7,53 @@ import process from "process";
 import { readFileSync } from "fs";
 import { defaultExcluded, defaultIncluded, defaultPages } from "./templates";
 
+export type IViteConfig = Exclude<NonNullable<PluginOption>, false | PluginOption[] | Promise<PluginOption>>;
+export type LoadResultRet = NonNullable<IViteConfig["load"]>;
+
 export type InputValue = {
-    raw: string;
-    script_src: string;
-    out: string | null;
+    raw: RawFunc;
+    virtuals: Record<string, string>; // { SCRIPT_SRC: file_relative }
+    labels: Record<string, unknown>
+    out: string;
 };
-export type InputFunc = ({ config, env, input, raw, script_src, out }: {
+export type RawFunc = (params: {
     config: UserConfig;
     env: ConfigEnv;
     input: Record<string, InputValue>;
     current: InputValue;
-} & InputValue) => InputValue | null | void;
+}) => string | undefined;
 export type InputSources = {
     [id: string]: InputValue;
 };
 export type Option = {
-    scanDir?: string;
-    included?: string[];
-    excluded?: string[];
-    pages?: {
-        [glob: string]: InputFunc;
-    }[];
-    glob_opts?: GlobOptionsWithFileTypesUnset;
+    files: InputValue[];
 };
 
-export const PREFIX = "\0vite-virtual-file-router-prefix:" as const; // vvfr-pre
-/// @ts-ignore
-export const symNull = Symbol(null);
-export const html = readFileSync(join(__dirname, "../template/minimal.html")).toString();
+export const PREFIX = "\0vvfr-pre:" as const; // vvfr-pre
 
-export const virtualRouter = async (opts?: Option) => {
-    opts ??= {};
-    const { glob_opts } = opts;
-    let { scanDir, included, excluded, pages } = opts;
+export const virtualRouter = async ({ files }: Option) => {
 
-    scanDir ??= "src";
-    included ??= defaultIncluded;
-    excluded ??= defaultExcluded;
-    pages ??= defaultPages;
-
-    let root: string, files: string[];
+    let root: string, config: UserConfig, env: ConfigEnv;
     const input: InputSources = {};
 
     return [
         {
             name: "vite-virtual-router",
-            async config(config, env) {
-                config.root = config.root ?? process.cwd();
-                root = config.root;
+            async config(_config, _env) {
+                config = _config;
+                env = _env;
 
                 config.build ??= {};
                 config.build.rollupOptions ??= {};
                 config.build.rollupOptions.input ??= [];
                 const cbro_input = config.build.rollupOptions.input;
 
-                files = await glob(included!, {
-                    cwd: join(root, scanDir!),
-                    ignore: excluded,
-                    nodir: true,
-                    ...glob_opts,
-                });
-
                 for (let filename of files) {
-                    filename = relative(root, filename);
-                    filename = filename.replaceAll(/\\/g, "/");
-                    
-                    const _input= {
-                        raw: html,
-                        script_src: filename,
-                        out: `${filename}/index.html`
-                    };
-
-                    /**
-                     * `current` can use to modify _input without need 
-                     * to return, which would continue to execute.
-                     * `config` can also be modified by users without
-                     * creating new plugins.
-                     */
-
-                    let v: ReturnType<InputFunc> = null;
-                    for (const p of pages!) {
-                        const [g, f] = Object.entries(p)[0];
-                        if (micromatch.isMatch(filename, g) && (v = f({ config, env, current: _input, input, ..._input })) )
-                            break;
-                    }
-
-                    /**
-                     * This allow user to set custom key directly, and ask
-                     * importer to not storing current file configuration.
-                     * ```
-                     * input["custom_file_path"] = { out: null }
-                     * return input["custom_file_path"];
-                     * ```
-                     */
-                    const out = v ? v.out : _input.out;
-                    if (out == null) continue;
-
-                    const virtual = `${PREFIX}${out}`;
-                    input[virtual] = v ? v : _input;
+                    const virtual = `${PREFIX}${filename.out}`;
+                    input[virtual] = filename;
                 }
 
-                for (const [id, ] of Object.entries(input)) {
+                for (const id of Object.keys(input)) {
                     if (Array.isArray(cbro_input)) cbro_input.push(id);
                         /// @ts-ignore
                         else cbro_input[id] = id;
@@ -131,9 +77,11 @@ export const virtualRouter = async (opts?: Option) => {
              */
             load(id, options) {
                 const _input = input[`${PREFIX}${id}`];
-                let raw = _input?.raw;
-                if (!_input) return;
-                raw = raw.replaceAll(/%SCRIPT_SRC%/ig, _input.script_src);
+                let raw = _input?.raw?.({ config, env, current: _input, input });
+                if (!raw) return;
+                for (const [SCRIPT_SRC, file_relative] of Object.entries(_input.virtuals)) {
+                    raw = raw.replaceAll(RegExp(`%${SCRIPT_SRC}%`, "ig"), file_relative);
+                }
                 return raw;
             },
         }
