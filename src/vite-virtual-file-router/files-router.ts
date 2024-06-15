@@ -31,7 +31,7 @@ export type Option = {
     glob_opts?: GlobOptionsWithFileTypesUnset;
 };
 
-export const PREFIX = "\0virtual-router-prefix:" as const;
+export const PREFIX = "\0vite-virtual-file-router-prefix:" as const; // vvfr-pre
 /// @ts-ignore
 export const symNull = Symbol(null);
 export const html = readFileSync(join(__dirname, "../template/minimal.html")).toString();

@@ -4,7 +4,7 @@ import Inspect from 'vite-plugin-inspect'
 import createInspect from "./src/plugin/inspect";
 
 import process from "process";
-import { virtualRouter } from './src/vite-virtual-router/files-router';
+import { virtualRouter } from './src/vite-virtual-file-router/files-router';
 import { inspect } from "util";
 
 // https://vitejs.dev/config/

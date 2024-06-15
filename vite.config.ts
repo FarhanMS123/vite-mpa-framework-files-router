@@ -1,8 +1,8 @@
 import { PluginOption, defineConfig, splitVendorChunkPlugin } from 'vite'
 import react from '@vitejs/plugin-react-swc'
-import { virtualRouter } from './src/vite-virtual-router/files-router'
+import { virtualRouter } from './src/vite-virtual-file-router/files-router'
 import DynamicPublicDirectory from "./src/vite-multiple-assets"
-import { defaultExcluded } from './src/vite-virtual-router/templates'
+import { defaultExcluded } from './src/vite-virtual-file-router/templates'
 import { showConfig } from './src/plugin/inspect'
 
 // https://vitejs.dev/config/
