@@ -4,25 +4,40 @@ import { type ConfigEnv, type PluginOption, type UserConfig } from "vite";
 export type InputValue = {
     out: string;
     raw: RawFunc;
-    labels: Record<string, unknown>
+    labels?: Record<string, unknown> & Partial<{
+        __call: number;
+        __id: string;
+        __options: unknown;
+    }>;
     virtuals: Record<string, string>; // { SCRIPT_SRC: file_relative }
 };
-export type RawFunc = (params: {
+export type DebugParams = {
+    __call?: number,
     config: UserConfig;
     env: ConfigEnv;
     input: Record<string, InputValue>;
+};
+export type RawFunc = (params: {
     current: InputValue;
-}) => string | undefined;
+} & DebugParams) => string | undefined;
 export type InputSources = Record<string, InputValue>; // { id: InputValue }
 export type Option = {
     files: InputValue[];
 };
+export type OptsFunc = (params: {
+    __input: Record<string, InputValue>; // previous input
+} & DebugParams) => Option;
 
 export const PREFIX = "\0vvfr-pre:" as const; // vvfr-pre
 
-export const virtualRouter = async ({ files }: Option) => {
+export const virtualRouter = async (_opts: Option | OptsFunc) => {
+    let opts: Option;
+    if (typeof _opts == "function") opts = { files: [] };
+    else opts = _opts;
+
+    let __call_opts = -1;
     let config: UserConfig, env: ConfigEnv;
-    const input: InputSources = {};
+    let input: InputSources = {};
 
     return [
         {
@@ -36,7 +51,13 @@ export const virtualRouter = async ({ files }: Option) => {
                 config.build.rollupOptions.input ??= [];
                 const cbro_input = config.build.rollupOptions.input;
 
-                for (let filename of files) {
+                if (typeof _opts == "function") {
+                    const __input = input;
+                    input = {};
+                    opts = _opts({ __call: ++__call_opts, config, env, input, __input });
+                }
+
+                for (let filename of opts.files) {
                     const virtual = `${PREFIX}${filename.out}`;
                     input[virtual] = filename;
                     if (Array.isArray(cbro_input)) cbro_input.push(virtual);
@@ -47,7 +68,7 @@ export const virtualRouter = async ({ files }: Option) => {
 
             /**
              * A literal modules must have no PREFIX on the key
-             * and has `null` in the `out`put. As such condition meet,
+             * or has `null` in the `out`put. As such condition meet,
              * it would going with source.
              */
             resolveId(source, importer, options) {
@@ -62,6 +83,9 @@ export const virtualRouter = async ({ files }: Option) => {
              */
             load(id, options) {
                 const _input = input[`${PREFIX}${id}`];
+                _input.labels ??= {};
+                _input.labels.__id = id;
+                _input.labels.__options = options;
                 let raw = _input?.raw?.({ config, env, current: _input, input });
                 if (!raw) return;
                 for (const [SCRIPT_SRC, file_relative] of Object.entries(_input.virtuals)) {
