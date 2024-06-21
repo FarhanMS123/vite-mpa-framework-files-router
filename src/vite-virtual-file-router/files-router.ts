@@ -9,7 +9,7 @@ export type InputValue = {
         __id: string;
         __options: unknown;
     }>;
-    virtuals: Record<string, string>; // { SCRIPT_SRC: file_relative }
+    virtuals?: Record<string, string>; // { SCRIPT_SRC: file_relative }
 };
 export type DebugParams = {
     __call?: number,
@@ -88,7 +88,7 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                 _input.labels.__options = options;
                 let raw = await _input?.raw?.({ config, env, current: _input, input });
                 if (!raw) return;
-                for (const [SCRIPT_SRC, file_relative] of Object.entries(_input.virtuals)) {
+                for (const [SCRIPT_SRC, file_relative] of Object.entries(_input.virtuals ?? {})) {
                     raw = raw.replaceAll(RegExp(`%${SCRIPT_SRC}%`, "ig"), `${PREFIX}${file_relative}`);
                 }
                 return raw;

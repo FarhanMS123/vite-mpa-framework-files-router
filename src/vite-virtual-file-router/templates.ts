@@ -13,32 +13,20 @@ export type MetaCrawler = {
     always_use_main?: boolean; // false
 };
 
-export const pattern_no_folder = "**.page.!(html)";
-export const parsePageRelative = ({ cwd, script_src, ext }: {
-    cwd: string;
-    script_src: string;
-    ext: string;
-}) => {
-    const ret = {
-        relative: "",
-        out_dir: "",
-        filename: "",
-        ext: "",
-        basename: "",
-    };
-    ret.relative = isAbsolute(script_src) ? relative(cwd, script_src) : script_src;
-    ret.out_dir = dirname(ret.relative);
-    ret.filename = basename(ret.relative);
-    ret.ext = ext;
-    ret.basename = basename(ret.relative, ext);
-}
+export const pattern_js_ts = "**.page.{js,ts,jsm,tsm}";
+export const pattern_jsx_tsx = "**.page.{jsx,tsx}";
 export const jts2page = ({ cwd, script_src, index_out, ...opts }: {
     cwd: string;
-} & Pick<SRC2PAGE_params, "script_src"> & Partial<SRC2PAGE_params>) => src2page({
+} & Pick<SRC2PAGE_params, "script_src"> & Partial<Omit<SRC2PAGE_params, "script_src">>) => src2page({
     script_src: script_src,
     index_out: index_out ?? `${isAbsolute(script_src) ? relative(cwd, script_src) : script_src}.html`,
     ...opts
 });
+export const jtx2page = ({ cwd, script_src, index_out, ...opts }: Parameters<typeof jts2page>[0]) => 
+    jts2page({ cwd, script_src, index_out, main_out: {
+        out: opts.main_out?.out ?? `${isAbsolute(script_src) ? relative(cwd, script_src) : script_src}.ts`,
+        raw: () => readFile(join(__dirname, "template/main_react.tsx"), { encoding: "utf8" }),
+    } });
 
 export const pattern_index = "**/index.page.!(html)";
 export const pattern_html = "**/*.html";
@@ -55,14 +43,15 @@ export const src2page = ({
     index_out, 
     script_src,
     main_out,
-}: SRC2PAGE_params) => { // handle virtuals, not env vars
+    labels, virtuals,
+}: SRC2PAGE_params & Pick<InputValue, "labels" | "virtuals">) => { // handle virtuals, not env vars
     let ret: InputValue[] = [];
 
     if (main_out) {
         ret.push({
             out: main_out.out,
             raw: async (...params) => (await main_out.raw(...params))?.replace(/%SCRIPT_SRC%/ig, script_src),
-            virtuals: {},
+            virtuals, labels,
         });
     }
 
@@ -75,7 +64,9 @@ export const src2page = ({
         },
         virtuals: {
             SCRIPT_SRC: main_out?.out ?? "%SCRIPT_SRC%",
+            ...virtuals,
         },
+        labels,
     });
 
     return ret;
