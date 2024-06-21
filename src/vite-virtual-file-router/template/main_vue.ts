@@ -1,8 +1,8 @@
 import { createApp } from 'vue';
+import { createRoot } from 'vite-virtual-file-router/template/helper'
 
 /// @ts-ignore
 import App from '%SCRIPT_SRC%';
-import { createRoot } from './helper';
 
 const root = createRoot();
 

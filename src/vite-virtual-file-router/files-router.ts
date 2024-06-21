@@ -19,14 +19,14 @@ export type DebugParams = {
 };
 export type RawFunc = (params: {
     current: InputValue;
-} & DebugParams) => string | undefined;
+} & DebugParams) => string | undefined | Promise<string | undefined>;
 export type InputSources = Record<string, InputValue>; // { id: InputValue }
 export type Option = {
     files: InputValue[];
 };
 export type OptsFunc = (params: {
     __input: Record<string, InputValue>; // previous input
-} & DebugParams) => Option;
+} & DebugParams) => Option | Promise<Option>;
 
 export const PREFIX = "\0vvfr-pre:" as const; // vvfr-pre
 
@@ -54,7 +54,7 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                 if (typeof _opts == "function") {
                     const __input = input;
                     input = {};
-                    opts = _opts({ __call: ++__call_opts, config, env, input, __input });
+                    opts = await _opts({ __call: ++__call_opts, config, env, input, __input });
                 }
 
                 for (let filename of opts.files) {
@@ -81,12 +81,12 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
              * and decide `out`put as `null`. This load would not process any key
              * that is not use PREFIX.
              */
-            load(id, options) {
+            async load(id, options) {
                 const _input = input[`${PREFIX}${id}`];
                 _input.labels ??= {};
                 _input.labels.__id = id;
                 _input.labels.__options = options;
-                let raw = _input?.raw?.({ config, env, current: _input, input });
+                let raw = await _input?.raw?.({ config, env, current: _input, input });
                 if (!raw) return;
                 for (const [SCRIPT_SRC, file_relative] of Object.entries(_input.virtuals)) {
                     raw = raw.replaceAll(RegExp(`%${SCRIPT_SRC}%`, "ig"), `${PREFIX}${file_relative}`);

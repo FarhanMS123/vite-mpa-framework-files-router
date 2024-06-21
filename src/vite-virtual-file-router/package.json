@@ -1,18 +1,27 @@
 {
-  "name": "vite-virtual-router",
+  "name": "vite-virtual-file-router",
   "version": "0.0.1",
   "description": "",
   "main": "files-router.ts",
-  "scripts": {
-  },
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "glob": "^10.3.10",
     "micromatch": "^4.0.5"
+  },
+  "peerDependencies": {
+    "glob": "^10.3.10",
+    "vue": "^3.4.29"
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.6"
+  },
+  "files": [
+    "**"
+  ],
+  "exports": {
+    "./files-router": "./files-router.ts",
+    "./template/helper": "./template/helper.ts"
   }
 }
