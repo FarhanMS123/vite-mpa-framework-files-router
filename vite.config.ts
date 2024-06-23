@@ -5,7 +5,7 @@ import { showConfig } from './src/plugin/inspect'
 import fg from "fast-glob";
 import mm from "micromatch"
 import path from "path";
-import { defaultExcluded, jtx_main, pattern_html, pattern_index, pattern_js_ts, pattern_jsx_tsx, src2page } from './src/vite-virtual-file-router/templates'
+import { abs2rel, defaultExcluded, jtx_main, pattern_html, pattern_index, pattern_js_ts, pattern_jsx_tsx, src2page } from './src/vite-virtual-file-router/templates'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -29,7 +29,7 @@ export default defineConfig({
         ignore: defaultExcluded,
         cwd,
         dot: true,
-        braceExpansion: true,
+        // braceExpansion: true,
         globstar: true,
         extglob: true,
         markDirectories: true,
@@ -42,16 +42,14 @@ export default defineConfig({
         if (mm.isMatch(script_src, mm.braces(pattern_js_ts, { expand: true }), mmOpts))
           __files.push(...src2page({ cwd, script_src }));
         else if (mm.isMatch(script_src, mm.braces(pattern_jsx_tsx, { expand: true }), mmOpts))
-          __files.push(...src2page({ cwd, script_src, main_out: { raw: jtx_main } }))
-        // else if (mm.isMatch(script_src, pattern_html, mmOpts))
-        //   __push_rollup_input(cbro_input, path.resolve(script_src));
+          __files.push(...src2page({ cwd, script_src, main_out: { out: `${abs2rel(cwd, script_src)}.tsx`, raw: jtx_main } }))
+        else if (mm.isMatch(script_src, pattern_html, mmOpts))
+          __push_rollup_input(cbro_input, path.resolve(script_src));
 
         let cap: string | undefined;
-        for (const file of __files) {
+        for (const file of __files)
           if (cap = mm.capture(pattern_index, file.out, mmOpts)?.[0])
             file.out = `${cap}/index.html`;
-          console.log(file.out, cap, pattern_index, mm.capture(pattern_index, file.out, { basename: true }));
-        }
         
         files.push(...__files);
       }

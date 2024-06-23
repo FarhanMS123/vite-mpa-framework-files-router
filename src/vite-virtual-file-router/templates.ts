@@ -20,6 +20,8 @@ export const jtx_main = () => readFile(join(__dirname, "template/main_react.tsx"
 export const pattern_index = "**.page.*.html";
 export const pattern_html = "**.html";
 
+export const abs2rel = (cwd: string, src: string) => isAbsolute(src) ? relative(cwd, src) : src;
+
 export type SRC2PAGE_params = {
     cwd: string,
     script_src: string, 
@@ -38,10 +40,10 @@ export const src2page = ({
 }: SRC2PAGE_params & Pick<InputValue, "labels" | "virtuals">) => { // handle virtuals, not env vars
     let ret: InputValue[] = [];
 
-    index_out ??= `${isAbsolute(script_src) ? relative(cwd, script_src) : script_src}.html`;
+    index_out ??= `${abs2rel(cwd, script_src)}.html`;
 
     if (main_out) {
-        main_out.out ??= `${isAbsolute(script_src) ? relative(cwd, script_src) : script_src}.ts`;
+        main_out.out ??= `${abs2rel(cwd, script_src)}.ts`;
         ret.push({
             out: main_out.out,
             raw: async (...params) => (await main_out.raw(...params))?.replace(/%SCRIPT_SRC%/ig, script_src),

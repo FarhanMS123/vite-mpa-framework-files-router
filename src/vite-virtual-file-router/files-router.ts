@@ -92,6 +92,7 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
              */
             async load(id, options) {
                 const _input = input[`${PREFIX}${id}`];
+                if (!_input) return;
                 _input.labels ??= {};
                 _input.labels.__id = id;
                 _input.labels.__options = options;
