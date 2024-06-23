@@ -30,6 +30,20 @@ export type OptsFunc = (params: {
 
 export const PREFIX = "\0vvfr-pre:" as const; // vvfr-pre
 
+export function __prepare_cbro_input(config: UserConfig) {
+    config.build ??= {};
+    config.build.rollupOptions ??= {};
+    config.build.rollupOptions.input ??= [];
+    const cbro_input = config.build.rollupOptions.input;
+    return cbro_input;
+}
+
+export function __push_rollup_input(cbro_input: ReturnType<typeof __prepare_cbro_input>, input: string) {
+    if (Array.isArray(cbro_input)) cbro_input.push(input);
+        /// @ts-ignore
+        else cbro_input[input] = input;
+}
+
 export const virtualRouter = async (_opts: Option | OptsFunc) => {
     let opts: Option;
     if (typeof _opts == "function") opts = { files: [] };
@@ -46,10 +60,7 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                 config = _config;
                 env = _env;
 
-                config.build ??= {};
-                config.build.rollupOptions ??= {};
-                config.build.rollupOptions.input ??= [];
-                const cbro_input = config.build.rollupOptions.input;
+                const cbro_input = __prepare_cbro_input(config)
 
                 if (typeof _opts == "function") {
                     const __input = input;
@@ -57,12 +68,10 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                     opts = await _opts({ __call: ++__call_opts, config, env, input, __input });
                 }
 
-                for (let filename of opts.files) {
-                    const virtual = `${PREFIX}${filename.out}`;
-                    input[virtual] = filename;
-                    if (Array.isArray(cbro_input)) cbro_input.push(virtual);
-                        /// @ts-ignore
-                        else cbro_input[id] = id;
+                for (let file of opts.files) {
+                    const virtual = `${PREFIX}${file.out}`;
+                    input[virtual] = file;
+                    __push_rollup_input(cbro_input, virtual);
                 }
             },
 

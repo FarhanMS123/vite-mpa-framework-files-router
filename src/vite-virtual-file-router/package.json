@@ -7,15 +7,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "micromatch": "^4.0.5"
-  },
   "peerDependencies": {
+    "micromatch": "^4.0.5",
+    "@types/micromatch": "^4.0.6",
+    "fast-glob": "^3.3.2",
     "glob": "^10.3.10",
     "vue": "^3.4.29"
-  },
-  "devDependencies": {
-    "@types/micromatch": "^4.0.6"
   },
   "files": [
     "**"

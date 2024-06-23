@@ -13,33 +13,24 @@ export type MetaCrawler = {
     always_use_main?: boolean; // false
 };
 
-export const pattern_js_ts = "**.page.{js,ts,jsm,tsm}";
-export const pattern_jsx_tsx = "**.page.{jsx,tsx}";
-export const jts2page = ({ cwd, script_src, index_out, ...opts }: {
-    cwd: string;
-} & Pick<SRC2PAGE_params, "script_src"> & Partial<Omit<SRC2PAGE_params, "script_src">>) => src2page({
-    script_src: script_src,
-    index_out: index_out ?? `${isAbsolute(script_src) ? relative(cwd, script_src) : script_src}.html`,
-    ...opts
-});
-export const jtx2page = ({ cwd, script_src, index_out, ...opts }: Parameters<typeof jts2page>[0]) => 
-    jts2page({ cwd, script_src, index_out, main_out: {
-        out: opts.main_out?.out ?? `${isAbsolute(script_src) ? relative(cwd, script_src) : script_src}.ts`,
-        raw: () => readFile(join(__dirname, "template/main_react.tsx"), { encoding: "utf8" }),
-    } });
+export const pattern_js_ts = "**.page.{ts,js,jsm}";
+export const pattern_jsx_tsx = "**.page.{tsx,jsx}";
+export const jtx_main = () => readFile(join(__dirname, "template/main_react.tsx"), { encoding: "utf8" });
 
-export const pattern_index = "**/index.page.!(html)";
-export const pattern_html = "**/*.html";
+export const pattern_index = "**.page.*.html";
+export const pattern_html = "**.html";
 
 export type SRC2PAGE_params = {
+    cwd: string,
     script_src: string, 
-    index_out: string, 
+    index_out?: string, 
     main_out?: {
-        out: string;
+        out?: string;
         raw: RawFunc;
     },
 };
 export const src2page = ({
+    cwd,
     index_out, 
     script_src,
     main_out,
@@ -47,7 +38,10 @@ export const src2page = ({
 }: SRC2PAGE_params & Pick<InputValue, "labels" | "virtuals">) => { // handle virtuals, not env vars
     let ret: InputValue[] = [];
 
+    index_out ??= `${isAbsolute(script_src) ? relative(cwd, script_src) : script_src}.html`;
+
     if (main_out) {
+        main_out.out ??= `${isAbsolute(script_src) ? relative(cwd, script_src) : script_src}.ts`;
         ret.push({
             out: main_out.out,
             raw: async (...params) => (await main_out.raw(...params))?.replace(/%SCRIPT_SRC%/ig, script_src),
@@ -78,3 +72,8 @@ export const src2page = ({
 //                  -> **/home.page.vue.html, ...
 //                  -> **/home/index.html, **/home.page.vue.main.ts, **/home.page.vue
 export const pattern_vue = "**.page.vue";
+export const vue_main = () => readFile(join(__dirname, "template/main_vue.ts"), { encoding: "utf8" });
+
+export const defaultExcluded = [".git/**", "*.local/**", "src/**", "dist/**", "node_modules/**", "public/**"];
+export const defaultIncluded = [pattern_html, pattern_jsx_tsx, pattern_js_ts];
+export const extendedIncluded = [pattern_html, pattern_jsx_tsx, pattern_vue, "**.md", pattern_js_ts];

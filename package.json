@@ -17,6 +17,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@types/micromatch": "^4.0.6",
     "@types/node": "^20.10.6",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
@@ -26,6 +27,8 @@
     "eslint": "^8.55.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "fast-glob": "^3.3.2",
+    "micromatch": "^4.0.5",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
     "vite-plugin-inspect": "^0.8.1"
