@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { type ConfigEnv, type PluginOption, type UserConfig } from "vite";
 
+// #region TYPES ##################################################################
+
 export type InputValue = {
     out: string;
+    is_virtual?: boolean; // true
     raw: RawFunc;
     labels?: Record<string, unknown> & Partial<{
         __call: number;
@@ -28,7 +31,11 @@ export type OptsFunc = (params: {
     __input: Record<string, InputValue>; // previous input
 } & DebugParams) => Option | Promise<Option>;
 
+// #endregion ##################################################################
+
 export const PREFIX = "\0vvfr-pre:" as const; // vvfr-pre
+
+// #region UTILITIES ##################################################################
 
 export function __prepare_cbro_input(config: UserConfig) {
     config.build ??= {};
@@ -43,6 +50,8 @@ export function __push_rollup_input(cbro_input: ReturnType<typeof __prepare_cbro
         /// @ts-ignore
         else cbro_input[input] = input;
 }
+
+// #endregion ##################################################################
 
 export const virtualRouter = async (_opts: Option | OptsFunc) => {
     let opts: Option;
@@ -69,7 +78,8 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                 }
 
                 for (let file of opts.files) {
-                    const virtual = `${PREFIX}${file.out}`;
+                    file.is_virtual ??= true;
+                    const virtual = file.is_virtual ? `${PREFIX}${file.out}` : file.out;
                     input[virtual] = file;
                     __push_rollup_input(cbro_input, virtual);
                 }
@@ -99,7 +109,7 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                 let raw = await _input?.raw?.({ config, env, current: _input, input });
                 if (!raw) return;
                 for (const [SCRIPT_SRC, file_relative] of Object.entries(_input.virtuals ?? {})) {
-                    raw = raw.replaceAll(RegExp(`%${SCRIPT_SRC}%`, "ig"), `${PREFIX}${file_relative}`);
+                    raw = raw.replaceAll(RegExp(`%${SCRIPT_SRC}%`, "ig"), file_relative);
                 }
                 return raw;
             },

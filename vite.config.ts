@@ -38,18 +38,17 @@ export default defineConfig({
       const _files = await fg(pattern, mmOpts);
       
       for ( const script_src of _files ) {
-        const __files = [];
+        const __files: InputValue[] = [];
         if (mm.isMatch(script_src, mm.braces(pattern_js_ts, { expand: true }), mmOpts))
           __files.push(...src2page({ cwd, script_src }));
         else if (mm.isMatch(script_src, mm.braces(pattern_jsx_tsx, { expand: true }), mmOpts))
           __files.push(...src2page({ cwd, script_src, main_out: { out: `${abs2rel(cwd, script_src)}.tsx`, raw: jtx_main } }))
         else if (mm.isMatch(script_src, pattern_html, mmOpts))
-          __push_rollup_input(cbro_input, path.resolve(script_src));
+          __files.push({ is_virtual: false, out: path.resolve(script_src), raw: () => undefined })
 
-        let cap: string | undefined;
         for (const file of __files)
-          if (cap = mm.capture(pattern_index, file.out, mmOpts)?.[0])
-            file.out = `${cap}/index.html`;
+          if (file.out.match(/\.page\.\w\.html$/ig))
+            file.out = `${file.out.replaceAll(/\.page\.\w\.html$/ig, "")}/index.html`;
         
         files.push(...__files);
       }
@@ -66,6 +65,9 @@ export default defineConfig({
   build: {
     outDir: "dist",
     assetsDir: "chunks",
+  },
+  resolve: {
+    preserveSymlinks: true,
   },
 
   root: process.cwd(),
