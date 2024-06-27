@@ -8,13 +8,18 @@
   "author": "",
   "license": "ISC",
   "peerDependencies": {
-    "vue": "^3.4.29"
+    "vue": "^3.4.29",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17"
   },
   "files": [
     "**"
   ],
   "exports": {
     "./files-router": "./files-router.ts",
-    "./template/helper": "./template/helper.ts"
+    "./template/helper": "./template/helper.ts",
+    "./templates": "./templates.ts"
   }
 }

@@ -14,6 +14,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.3.1(react@18.3.1)
+      vite-virtual-file-router:
+        specifier: workspace:*
+        version: link:src/vite-virtual-file-router
     devDependencies:
       '@types/micromatch':
         specifier: ^4.0.6
@@ -60,9 +63,24 @@ importers:
       vite-plugin-inspect:
         specifier: ^0.8.1
         version: 0.8.4(rollup@4.18.0)(vite@5.3.1(@types/node@20.14.8))
+    dependenciesMeta:
+      vite-virtual-file-router:
+        injected: true
 
   src/vite-virtual-file-router:
     dependencies:
+      '@types/react':
+        specifier: ^18.2.43
+        version: 18.3.3
+      '@types/react-dom':
+        specifier: ^18.2.17
+        version: 18.3.0
+      react:
+        specifier: ^18.2.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.3.1(react@18.3.1)
       vue:
         specifier: ^3.4.29
         version: 3.4.30(typescript@5.5.2)

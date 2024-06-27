@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "workspaces": [
-    "src/**"
+    "src/vite-virtual-file-router"
   ],
   "scripts": {
     "dev": "vite",
@@ -13,7 +13,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vite-virtual-file-router": "workspace:0.0.1",
+    "vite-virtual-file-router": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
