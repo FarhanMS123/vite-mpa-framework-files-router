@@ -17,7 +17,9 @@ export const pattern_js_ts = "{,**/}*.page.{ts,js,jsm}";
 export const pattern_jsx_tsx = "{,**/}*.page.{tsx,jsx}";
 export const jtx_main = () => readFile(join(__dir, "template/main_react.tsx"), { encoding: "utf8" });
 
-export const pattern_index = "{,**/}*.page.*.html";
+export const __dir = __dirname;
+export const pattern_out_html = "*.page.*.html";
+export const pattern_index_page_html = "index.page.*.html";
 export const pattern_html = "{,**/}*.html";
 
 export const abs2rel = (cwd: string, src: string) => isAbsolute(src) ? relative(cwd, src) : src;
@@ -78,10 +80,6 @@ export const src2page = ({
 //                  -> **/home/index.html, **/home.page.vue.main.ts, **/home.page.vue
 export const pattern_vue = "{,**/}*.page.vue";
 export const vue_main = () => readFile(join(__dir, "template/main_vue.ts"), { encoding: "utf8" });
-
-export const __dir = __dirname;
-export const pattern_out_html = "*.page.*.html";
-export const pattern_index_html = "index.page.*.html";
 
 export const defaultExcluded = ["{,**/}.git/**", "{,**/}*.local{,/**}", "src/**", "dist/**", "node_modules/**", "public/**"];
 export const defaultIncluded = [pattern_html, pattern_jsx_tsx, pattern_js_ts];

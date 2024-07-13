@@ -1,18 +1,21 @@
 import { PluginOption, defineConfig, splitVendorChunkPlugin } from 'vite'
 import react from '@vitejs/plugin-react-swc'
-import { InputValue, __prepare_cbro_input, __push_rollup_input, virtualRouter } from './src/vite-virtual-file-router/files-router'
-import { showConfig } from './src/plugin/inspect'
+import { InputValue, __prepare_cbro_input, __push_rollup_input, virtualRouter } from 'vite-virtual-file-router/files-router'
+import Inspect from 'vite-plugin-inspect'
+import createInspect, { showConfig } from './src/plugin/inspect'
 import fg from "fast-glob";
 import mm from "micromatch"
 import path from "path";
-import { abs2rel, defaultExcluded, jtx_main, pattern_html, pattern_index, pattern_index_html, pattern_js_ts, pattern_jsx_tsx, pattern_out_html, src2page } from './src/vite-virtual-file-router/templates'
+import { abs2rel, defaultExcluded, jtx_main, pattern_html, pattern_index_page_html, 
+          pattern_js_ts, pattern_jsx_tsx, pattern_out_html, src2page } from 'vite-virtual-file-router/templates'
+import DynamicPublicDirectory from 'vite-multiple-assets';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    // DynamicPublicDirectory(["./**"], {
-    //    ignore: [...defaultExcluded],
-    // }) as unknown as PluginOption,
+    DynamicPublicDirectory(["./**"], {
+       ignore: [...defaultExcluded],
+    }) as PluginOption,
     virtualRouter(async ({ config, env }) => {
       const files: InputValue[] = [];
       const cwd = config.root!;
@@ -44,7 +47,7 @@ export default defineConfig({
 
         for (const file of __files)
           if (file.is_virtual != false) { // file.is_virtual == true || file.is_virtual == ""
-            if (mm.isMatch(file.out, pattern_index_html, {...mmOpts, basename: true}))
+            if (mm.isMatch(file.out, pattern_index_page_html, {...mmOpts, basename: true}))
               file.out = `${file.out.replaceAll(/\.page\.\w+\.html$/ig, "")}.html`;
             else if (mm.isMatch(file.out, pattern_out_html, {...mmOpts, basename: true}))
               file.out = `${file.out.replaceAll(/\.page\.\w+\.html$/ig, "")}/index.html`;
