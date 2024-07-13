@@ -10,11 +10,9 @@ import { abs2rel, defaultExcluded, jtx_main, pattern_html, pattern_index, patter
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    // showConfig,
     // DynamicPublicDirectory(["./**"], {
     //    ignore: [...defaultExcluded],
     // }) as unknown as PluginOption,
-    // showConfig,
     virtualRouter(async ({ config, env }) => {
       const files: InputValue[] = [];
       const cwd = config.root!;
@@ -23,7 +21,7 @@ export default defineConfig({
 
       const pattern = [pattern_jsx_tsx, pattern_js_ts, pattern_html];
       const mmOpts: fg.Options = {
-        baseNameMatch: true,
+        // baseNameMatch: true,
         caseSensitiveMatch: false,
         onlyFiles: true,
         ignore: defaultExcluded,
@@ -39,16 +37,16 @@ export default defineConfig({
       
       for ( const script_src of _files ) {
         const __files: InputValue[] = [];
-        if (mm.isMatch(script_src, mm.braces(pattern_js_ts, { expand: true }), mmOpts))
+        if (mm.isMatch(script_src, pattern_js_ts, mmOpts))
           __files.push(...src2page({ cwd, script_src }));
-        else if (mm.isMatch(script_src, mm.braces(pattern_jsx_tsx, { expand: true }), mmOpts))
+        else if (mm.isMatch(script_src, pattern_jsx_tsx, mmOpts))
           __files.push(...src2page({ cwd, script_src, main_out: { out: `${abs2rel(cwd, script_src)}.tsx`, raw: jtx_main } }))
         else if (mm.isMatch(script_src, pattern_html, mmOpts))
           __files.push({ is_virtual: false, out: path.resolve(script_src), raw: () => undefined })
 
         for (const file of __files)
-          if (file.out.match(/\.page\.\w\.html$/ig))
-            file.out = `${file.out.replaceAll(/\.page\.\w\.html$/ig, "")}/index.html`;
+          if (mm.isMatch(file.out, "{,**/}*.page.*.html", mmOpts) && file.is_virtual != false)
+            file.out = `${file.out.replaceAll(/\.page\.\w+\.html$/ig, "")}/index.html`;
         
         files.push(...__files);
       }
@@ -57,7 +55,6 @@ export default defineConfig({
         files,
       };
     }),
-    showConfig,
     splitVendorChunkPlugin(),
     react(),
   ],
@@ -73,4 +70,10 @@ export default defineConfig({
   root: process.cwd(),
   publicDir: false,
   base: "/",
+
+  define: {
+    __TIME__: new Date().getTime(),
+    "import.meta.env.time": new Date().getTime(),
+    VITE_TIME: new Date().getTime(),
+  },
 });

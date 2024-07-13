@@ -13,12 +13,12 @@ export type MetaCrawler = {
     always_use_main?: boolean; // false
 };
 
-export const pattern_js_ts = "**.page.{ts,js,jsm}";
-export const pattern_jsx_tsx = "**.page.{tsx,jsx}";
+export const pattern_js_ts = "{,**/}*.page.{ts,js,jsm}";
+export const pattern_jsx_tsx = "{,**/}*.page.{tsx,jsx}";
 export const jtx_main = () => readFile(join(__dirname, "template/main_react.tsx"), { encoding: "utf8" });
 
-export const pattern_index = "**.page.*.html";
-export const pattern_html = "**.html";
+export const pattern_index = "{,**/}*.page.*.html";
+export const pattern_html = "{,**/}*.html";
 
 export const abs2rel = (cwd: string, src: string) => isAbsolute(src) ? relative(cwd, src) : src;
 
@@ -73,9 +73,10 @@ export const src2page = ({
 //                  -> home.html, **/home.page.vue.main.ts, **/home.page.vue
 //                  -> **/home.page.vue.html, ...
 //                  -> **/home/index.html, **/home.page.vue.main.ts, **/home.page.vue
-export const pattern_vue = "**.page.vue";
+export const pattern_vue = "{,**/}*.page.vue";
 export const vue_main = () => readFile(join(__dirname, "template/main_vue.ts"), { encoding: "utf8" });
 
-export const defaultExcluded = [".git/**", "*.local/**", "src/**", "dist/**", "node_modules/**", "public/**"];
+export const __dir = __dirname;
+export const defaultExcluded = ["{,**/}.git/**", "{,**/}*.local{,/**}", "src/**", "dist/**", "node_modules/**", "public/**"];
 export const defaultIncluded = [pattern_html, pattern_jsx_tsx, pattern_js_ts];
-export const extendedIncluded = [pattern_html, pattern_jsx_tsx, pattern_vue, "**.md", pattern_js_ts];
+export const extendedIncluded = [pattern_html, pattern_jsx_tsx, pattern_vue, "{,**/}*.md", pattern_js_ts];
