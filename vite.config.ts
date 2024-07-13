@@ -13,7 +13,7 @@ import DynamicPublicDirectory from './src/vite-multiple-assets';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    DynamicPublicDirectory(["./**"], {
+    DynamicPublicDirectory(["**"], {
        ignore: [...defaultExcluded],
     }) as PluginOption,
     virtualRouter(async ({ config, env }) => {
