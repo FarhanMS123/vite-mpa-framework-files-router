@@ -77,6 +77,9 @@ export const pattern_vue = "{,**/}*.page.vue";
 export const vue_main = () => readFile(join(__dirname, "template/main_vue.ts"), { encoding: "utf8" });
 
 export const __dir = __dirname;
+export const pattern_out_html = "*.page.*.html";
+export const pattern_index_html = "index.page.*.html";
+
 export const defaultExcluded = ["{,**/}.git/**", "{,**/}*.local{,/**}", "src/**", "dist/**", "node_modules/**", "public/**"];
 export const defaultIncluded = [pattern_html, pattern_jsx_tsx, pattern_js_ts];
 export const extendedIncluded = [pattern_html, pattern_jsx_tsx, pattern_vue, "{,**/}*.md", pattern_js_ts];

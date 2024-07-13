@@ -5,7 +5,7 @@ import { showConfig } from './src/plugin/inspect'
 import fg from "fast-glob";
 import mm from "micromatch"
 import path from "path";
-import { abs2rel, defaultExcluded, jtx_main, pattern_html, pattern_index, pattern_js_ts, pattern_jsx_tsx, src2page } from './src/vite-virtual-file-router/templates'
+import { abs2rel, defaultExcluded, jtx_main, pattern_html, pattern_index, pattern_index_html, pattern_js_ts, pattern_jsx_tsx, pattern_out_html, src2page } from './src/vite-virtual-file-router/templates'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -21,17 +21,15 @@ export default defineConfig({
 
       const pattern = [pattern_jsx_tsx, pattern_js_ts, pattern_html];
       const mmOpts: fg.Options = {
-        // baseNameMatch: true,
-        caseSensitiveMatch: false,
-        onlyFiles: true,
-        ignore: defaultExcluded,
         cwd,
+        ignore: defaultExcluded,
+        onlyFiles: true,
+        onlyDirectories: false,
+        markDirectories: true,
+        caseSensitiveMatch: false,
         dot: true,
-        // braceExpansion: true,
         globstar: true,
         extglob: true,
-        markDirectories: true,
-        onlyDirectories: false,
       };
       const _files = await fg(pattern, mmOpts);
       
@@ -45,8 +43,12 @@ export default defineConfig({
           __files.push({ is_virtual: false, out: path.resolve(script_src), raw: () => undefined })
 
         for (const file of __files)
-          if (mm.isMatch(file.out, "{,**/}*.page.*.html", mmOpts) && file.is_virtual != false)
-            file.out = `${file.out.replaceAll(/\.page\.\w+\.html$/ig, "")}/index.html`;
+          if (file.is_virtual != false) { // file.is_virtual == true || file.is_virtual == ""
+            if (mm.isMatch(file.out, pattern_index_html, {...mmOpts, basename: true}))
+              file.out = `${file.out.replaceAll(/\.page\.\w+\.html$/ig, "")}.html`;
+            else if (mm.isMatch(file.out, pattern_out_html, {...mmOpts, basename: true}))
+              file.out = `${file.out.replaceAll(/\.page\.\w+\.html$/ig, "")}/index.html`;
+          }
         
         files.push(...__files);
       }
