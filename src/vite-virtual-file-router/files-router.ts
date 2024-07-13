@@ -94,6 +94,10 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                 return input[source]?.out ?? source;
             },
 
+            configResolved(_config) {
+                Object.assign(config, _config);
+            },
+
             /**
              * This only load virtual prefix.
              * After input constructed, user can define new input without prefix
@@ -108,9 +112,10 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                 _input.labels.__options = options;
                 let raw = await _input?.raw?.({ config, env, current: _input, input });
                 if (!raw) return;
-                for (const [SCRIPT_SRC, file_relative] of Object.entries(_input.virtuals ?? {})) {
-                    raw = raw.replaceAll(RegExp(`%${SCRIPT_SRC}%`, "ig"), file_relative);
-                }
+                for (const [SCRIPT_SRC, file_relative] of Object.entries(_input.virtuals ?? {}))
+                    raw = raw.replaceAll(RegExp(`%${SCRIPT_SRC}%`, "g"), file_relative);
+                for (const [key, val] of Object.entries({ ...config.define, ..._input.labels }))
+                    if (val && typeof val != "object" && typeof val != "function") raw = raw.replaceAll(RegExp(`%${key}%`, "g"), val.toString());
                 return raw;
             },
         }

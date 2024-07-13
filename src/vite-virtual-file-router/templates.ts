@@ -15,7 +15,7 @@ export type MetaCrawler = {
 
 export const pattern_js_ts = "{,**/}*.page.{ts,js,jsm}";
 export const pattern_jsx_tsx = "{,**/}*.page.{tsx,jsx}";
-export const jtx_main = () => readFile(join(__dirname, "template/main_react.tsx"), { encoding: "utf8" });
+export const jtx_main = () => readFile(join(__dir, "template/main_react.tsx"), { encoding: "utf8" });
 
 export const pattern_index = "{,**/}*.page.*.html";
 export const pattern_html = "{,**/}*.html";
@@ -36,8 +36,11 @@ export const src2page = ({
     index_out, 
     script_src,
     main_out,
+    raw_html,
     labels, virtuals,
-}: SRC2PAGE_params & Pick<InputValue, "labels" | "virtuals">) => { // handle virtuals, not env vars
+}: {
+    raw_html?: RawFunc;
+} & SRC2PAGE_params & Pick<InputValue, "labels" | "virtuals">) => { // handle virtuals, not env vars
     let ret: InputValue[] = [];
 
     index_out ??= `${abs2rel(cwd, script_src)}.html`;
@@ -46,16 +49,16 @@ export const src2page = ({
         main_out.out ??= `${abs2rel(cwd, script_src)}.ts`;
         ret.push({
             out: main_out.out,
-            raw: async (...params) => (await main_out.raw(...params))?.replace(/%SCRIPT_SRC%/ig, script_src),
+            raw: async (...params) => (await main_out.raw(...params))?.replace(/%SCRIPT_SRC%/g, script_src),
             virtuals, labels,
         });
     }
 
     ret.unshift({
         out: index_out,
-        raw: async () => {
-            let raw = await readFile(join(__dirname, "template/minimal.html"), { encoding: "utf8" })
-            if (!main_out?.out) raw = raw.replaceAll(/%SCRIPT_SRC%/ig, script_src);
+        raw: async (...params) => {
+            let raw = await raw_html?.(...params) ?? await readFile(join(__dir, "template/minimal.html"), { encoding: "utf8" })
+            if (!main_out?.out) raw = raw.replaceAll(/%SCRIPT_SRC%/g, script_src);
             return raw;
         },
         virtuals: {
@@ -74,7 +77,7 @@ export const src2page = ({
 //                  -> **/home.page.vue.html, ...
 //                  -> **/home/index.html, **/home.page.vue.main.ts, **/home.page.vue
 export const pattern_vue = "{,**/}*.page.vue";
-export const vue_main = () => readFile(join(__dirname, "template/main_vue.ts"), { encoding: "utf8" });
+export const vue_main = () => readFile(join(__dir, "template/main_vue.ts"), { encoding: "utf8" });
 
 export const __dir = __dirname;
 export const pattern_out_html = "*.page.*.html";
