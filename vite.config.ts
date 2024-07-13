@@ -1,14 +1,14 @@
 import { PluginOption, defineConfig, splitVendorChunkPlugin } from 'vite'
 import react from '@vitejs/plugin-react-swc'
-import { InputValue, __prepare_cbro_input, __push_rollup_input, virtualRouter } from 'vite-virtual-file-router/files-router'
+import { InputValue, __prepare_cbro_input, __push_rollup_input, virtualRouter } from './src/vite-virtual-file-router/files-router'
 import Inspect from 'vite-plugin-inspect'
 import createInspect, { showConfig } from './src/plugin/inspect'
 import fg from "fast-glob";
 import mm from "micromatch"
 import path from "path";
 import { abs2rel, defaultExcluded, jtx_main, pattern_html, pattern_index_page_html, 
-          pattern_js_ts, pattern_jsx_tsx, pattern_out_html, src2page } from 'vite-virtual-file-router/templates'
-import DynamicPublicDirectory from 'vite-multiple-assets';
+          pattern_js_ts, pattern_jsx_tsx, pattern_out_html, src2page } from './src/vite-virtual-file-router/templates'
+import DynamicPublicDirectory from './src/vite-multiple-assets';
 
 // https://vitejs.dev/config/
 export default defineConfig({
