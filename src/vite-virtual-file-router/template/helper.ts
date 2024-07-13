@@ -4,7 +4,7 @@ export function createRoot() {
     if (!root) {
         root = document.createElement("div");
         root.id = "root";
-        document.append(root);
+        document.body.append(root);
     }
 
     return root;
