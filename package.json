@@ -13,7 +13,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vite-virtual-file-router": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -32,7 +31,9 @@
     "micromatch": "^4.0.7",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
-    "vite-plugin-inspect": "^0.8.1"
+    "vite-plugin-inspect": "^0.8.1",
+    "vite-virtual-file-router": "workspace:*",
+    "vite-multiple-assets": "workspace:*"
   },
   "peerDependencies": {
     "scheduler": "^0.23.2"
