@@ -38,7 +38,7 @@ export default defineConfig({
     rollupOptions: {
       input: [
         // ...files,
-        files[1],
+        files[0],
         // "src/minimal.html",
       ],
     },
