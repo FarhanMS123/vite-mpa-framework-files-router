@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { createRoot } from '~/helper'
 
 /// @ts-ignore
-import App from "~/src/App";
+import App from "~/App";
 
 const root = createRoot();
 

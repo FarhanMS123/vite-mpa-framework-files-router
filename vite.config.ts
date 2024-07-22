@@ -12,15 +12,21 @@ const files = [
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    // tsconfigPaths(),
     [
       {
         name: "virtual",
         resolveId(source, importer, options) {
-          return source.slice(0, prefix.length) == prefix ? source.slice(prefix.length) : source;
+          console.log("resolveId", source, importer, options);
+          if (source.slice(0, prefix.length) != prefix) return;
+          console.log("resolveId", "RESOLVED", source, importer, options);
+          return source.slice(prefix.length)
         },
         async load(id, options) {
+          console.log("load", id, options);
           if (files.indexOf(`${prefix}${id}`) == -1) return;
-          let raw = await fs.readFile(id);
+          console.log("LOADED", id, options);
+          let raw = await fs.readFile(id, { encoding: "utf8" });
           return raw;
         },
       } as PluginOption,
@@ -30,7 +36,10 @@ export default defineConfig({
   ],
   build: {
     rollupOptions: {
-      input: files,
+      input: [
+        ...files,
+        // "src/minimal.html",
+      ],
     },
   },
 })
