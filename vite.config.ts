@@ -61,7 +61,9 @@ export default defineConfig({
         files,
       };
     }),
-    tsconfigPaths(),
+    tsconfigPaths({
+      loose: true,
+    }),
     splitVendorChunkPlugin(),
     react(),
   ],
