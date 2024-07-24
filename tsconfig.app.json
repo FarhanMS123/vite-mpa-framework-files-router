@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
@@ -11,6 +13,7 @@
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
 
@@ -19,12 +22,15 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+
     "baseUrl": ".",
-  },
-  "include": [".", "src"],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
+    "outDir": "./dist",
+    "paths": {
+      "~/*": ["./*"],
+      "~vite-multiple-assets/*": ["./src/vite-multiple-assets/*"],
+      "~vite-virtual-file-router/*": ["./src/vite-virtual-file-router/*"]
     }
-  ]
+  },
+  "include": ["**/*.ts", "**/*.js", "**/*.tsx", "**/*.jsx"],
+  "exclude": ["src/**", "node_modules"],
 }

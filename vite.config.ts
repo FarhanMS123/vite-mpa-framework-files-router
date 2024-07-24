@@ -1,5 +1,6 @@
 import { PluginOption, defineConfig, splitVendorChunkPlugin } from 'vite'
 import react from '@vitejs/plugin-react-swc'
+import tsconfigPaths from 'vite-tsconfig-paths'
 import { InputValue, __prepare_cbro_input, __push_rollup_input, virtualRouter } from './src/vite-virtual-file-router/files-router'
 import Inspect from 'vite-plugin-inspect'
 import createInspect, { showConfig } from './src/plugin/inspect'
@@ -13,8 +14,8 @@ import DynamicPublicDirectory from './src/vite-multiple-assets';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    DynamicPublicDirectory(["**"], {
-       ignore: [...defaultExcluded],
+    DynamicPublicDirectory(["**", "public/**"], {
+      ignore: [...defaultExcluded, "/public"],
     }) as PluginOption,
     virtualRouter(async ({ config, env }) => {
       const files: InputValue[] = [];
@@ -60,6 +61,7 @@ export default defineConfig({
         files,
       };
     }),
+    tsconfigPaths(),
     splitVendorChunkPlugin(),
     react(),
   ],

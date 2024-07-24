@@ -4,36 +4,41 @@
   "version": "0.0.0",
   "type": "module",
   "workspaces": [
-    "src/vite-virtual-file-router"
+    "src/vite-virtual-file-router",
+    "src/vite-multiple-assets"
   ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:tsc": "tsc -b",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vite-tsconfig-paths": "^4.3.2"
   },
   "devDependencies": {
-    "@types/micromatch": "^4.0.6",
-    "@types/node": "^20.14.8",
-    "@types/react": "^18.2.43",
-    "@types/react-dom": "^18.2.17",
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
+    "@types/micromatch": "^4.0.7",
+    "@types/node": "^20.14.10",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.13.1",
+    "@typescript-eslint/parser": "^7.13.1",
     "@vitejs/plugin-react-swc": "^3.5.0",
-    "eslint": "^8.55.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.5",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.4",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.7",
     "fast-glob": "^3.3.2",
     "micromatch": "^4.0.7",
     "typescript": "^5.2.2",
-    "vite": "^5.0.8",
+    "vite": "^5.3.1",
+    "vite-multiple-assets": "workspace:*",
     "vite-plugin-inspect": "^0.8.1",
-    "vite-virtual-file-router": "workspace:*",
-    "vite-multiple-assets": "workspace:*"
+    "vite-virtual-file-router": "workspace:*"
   },
   "peerDependencies": {
     "scheduler": "^0.23.2"

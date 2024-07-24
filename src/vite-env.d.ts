@@ -13,8 +13,8 @@ declare module NodeJS {
 
 declare global {
     interface Window {
-        createRootReact: (component: ReactNode) => void;
-        createAppVue: (component: ReactNode) => void;
-        ReactDOM: typeof ReactDOM;
+        // createRootReact: (component: ReactNode) => void;
+        // createAppVue: (component: ReactNode) => void;
+        // ReactDOM: typeof ReactDOM;
     }
 }
