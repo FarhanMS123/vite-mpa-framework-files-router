@@ -4,8 +4,8 @@ import { type ConfigEnv, type PluginOption, type UserConfig } from "vite";
 // #region TYPES ##################################################################
 
 export type InputValue = {
+    inject?: "virtual_index" | "virtual_resource"; // defult: "virtual_index"
     out: string;
-    is_virtual?: boolean; // true
     raw: RawFunc;
     labels?: Record<string, unknown> & Partial<{
         __call: number;
@@ -13,6 +13,9 @@ export type InputValue = {
         __options: unknown;
     }>;
     virtuals?: Record<string, string>; // { SCRIPT_SRC: file_relative }
+} | {
+    inject: "file";
+    out: string;
 };
 export type DebugParams = {
     __call?: number,
