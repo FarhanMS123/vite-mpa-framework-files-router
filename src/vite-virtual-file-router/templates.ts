@@ -1,5 +1,5 @@
 import { readFile } from "fs/promises";
-import { PREFIX, type RawFunc, type InputValue, type Option } from "./files-router";
+import { PREFIX_X00, type RawFunc, type InputValue, type Option, InputValue_Virtual } from "./files-router";
 import {  } from "path/posix";
 import { join, isAbsolute, relative, dirname, basename } from "path";
 
@@ -42,7 +42,7 @@ export const src2page = ({
     labels, virtuals,
 }: {
     raw_html?: RawFunc;
-} & SRC2PAGE_params & Pick<InputValue, "labels" | "virtuals">) => { // handle virtuals, not env vars
+} & SRC2PAGE_params & Pick<InputValue_Virtual, "labels" | "virtuals">) => { // handle virtuals, not env vars
     let ret: InputValue[] = [];
 
     index_out ??= `${abs2rel(cwd, script_src)}.html`;
@@ -50,6 +50,7 @@ export const src2page = ({
     if (main_out) {
         main_out.out ??= `${abs2rel(cwd, script_src)}.ts`;
         ret.push({
+            inject: "virtual_resource",
             out: main_out.out,
             raw: async (...params) => (await main_out.raw(...params))?.replace(/%SCRIPT_SRC%/g, script_src),
             virtuals, labels,
@@ -57,6 +58,7 @@ export const src2page = ({
     }
 
     ret.unshift({
+        inject: "virtual_index",
         out: index_out,
         raw: async (...params) => {
             let raw = await raw_html?.(...params) ?? await readFile(join(__dir, "template/minimal.html"), { encoding: "utf8" })

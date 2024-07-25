@@ -172,3 +172,15 @@ filename.levelA.levelB.levelC_ext_#
 - https://www.linuxjournal.com/content/pattern-matching-bash
 - https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html
 - KEYWORD: man bash pattern matching
+
+---
+
+## Compilation Error
+
+> TIMESTAMP: 2024/07/24
+
+- TSConfigPath not resolving virtual ts
+- I tried to make a simple example, and its turns out it only error when inserted in inputs, and virtuals
+- But, in file, it is not, maybe because it has no any prefix and just a simple plain filepath, it recognize
+- Oh. It also errors when I try to use FluentUI, because it would import modules from root, not from node_modules.
+- I add `virtual_index`, `virtual_resource`, and `file`

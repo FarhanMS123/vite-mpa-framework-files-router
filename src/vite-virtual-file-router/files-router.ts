@@ -3,8 +3,8 @@ import { type ConfigEnv, type PluginOption, type UserConfig } from "vite";
 
 // #region TYPES ##################################################################
 
-export type InputValue = {
-    inject?: "virtual_index" | "virtual_resource"; // defult: "virtual_index"
+export type InputValue_Virtual = {
+    inject?: "virtual_index" | "virtual_resource"; // defult: "virtual_index"; virtual_resource would not injected
     out: string;
     raw: RawFunc;
     labels?: Record<string, unknown> & Partial<{
@@ -13,10 +13,12 @@ export type InputValue = {
         __options: unknown;
     }>;
     virtuals?: Record<string, string>; // { SCRIPT_SRC: file_relative }
-} | {
+};
+export type InputValue_File = {
     inject: "file";
     out: string;
 };
+export type InputValue = InputValue_Virtual | InputValue_File;
 export type DebugParams = {
     __call?: number,
     config: UserConfig;
@@ -36,7 +38,8 @@ export type OptsFunc = (params: {
 
 // #endregion ##################################################################
 
-export const PREFIX = "\0vvfr-pre:" as const; // vvfr-pre
+export const PREFIX = "vvfr-pre:" as const; // vvfr-pre
+export const PREFIX_X00 = `\0${PREFIX}` as const; // vvfr-pre
 
 // #region UTILITIES ##################################################################
 
@@ -81,20 +84,11 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                 }
 
                 for (let file of opts.files) {
-                    file.is_virtual ??= true;
-                    const virtual = file.is_virtual ? `${PREFIX}${file.out}` : file.out;
+                    file.inject ??= "virtual_index";
+                    const virtual = file.inject == "file" ? file.out : `${PREFIX_X00}${file.out}`;
                     input[virtual] = file;
-                    __push_rollup_input(cbro_input, virtual);
+                    if (file.inject == "virtual_index" || file.inject == "file") __push_rollup_input(cbro_input, virtual);
                 }
-            },
-
-            /**
-             * A literal modules must have no PREFIX on the key
-             * or has `null` in the `out`put. As such condition meet,
-             * it would going with source.
-             */
-            resolveId(source, importer, options) {
-                return input[source]?.out ?? source;
             },
 
             configResolved(_config) {
@@ -102,13 +96,32 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
             },
 
             /**
+             * A literal modules must have no PREFIX on the key
+             * or has `null` in the `out`put. As such condition meet,
+             * it would going with source.
+             * This plugin would insert virtual file name such `\x00virtual-prefix:out-file`
+             * or something plugind defined into `config.build.rollupOptions.input`.
+             * This self defined file name also stored as key and for
+             * identification. As such, this resolveId would only need 
+             * to find `source` to related id. No need for `${PREFIX}${source}`
+             * As in file, it should reference as prefix without \x00. This also
+             * must be handled.
+             */
+            resolveId(source, importer, options) {
+                return input[source]?.out ?? input[`\0${source}`]?.out ?? source;
+            },
+
+            /**
              * This only load virtual prefix.
              * After input constructed, user can define new input without prefix
              * and decide `out`put as `null`. This load would not process any key
              * that is not use PREFIX.
+             * All resolved Id would be in the form of file path without prefix.
+             * As such, it need to compare the id with combined prefix. This load
+             * only need to find all virtuals and matching its metadata.
              */
             async load(id, options) {
-                const _input = input[`${PREFIX}${id}`];
+                const _input = input[`${PREFIX_X00}${id}`] as InputValue_Virtual;
                 if (!_input) return;
                 _input.labels ??= {};
                 _input.labels.__id = id;
@@ -116,8 +129,10 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                 let raw = await _input?.raw?.({ config, env, current: _input, input });
                 if (!raw) return;
                 for (const [SCRIPT_SRC, file_relative] of Object.entries(_input.virtuals ?? {}))
-                    raw = raw.replaceAll(RegExp(`%${SCRIPT_SRC}%`, "g"), file_relative);
+                    raw = raw.replaceAll(RegExp(`%${SCRIPT_SRC}%`, "g"), `${PREFIX}${file_relative}`);
                 for (const [key, val] of Object.entries({ ...config.define, ..._input.labels }))
+                    // typeof val != "object" && typeof val != "function
+                    // should only string, but how about symbols and undefined?
                     if (val && typeof val != "object" && typeof val != "function") raw = raw.replaceAll(RegExp(`%${key}%`, "g"), val.toString());
                 return raw;
             },
