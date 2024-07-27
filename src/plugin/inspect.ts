@@ -50,4 +50,7 @@ export const showConfig = [{
         const c = {...config, plugins: []} as UserConfig;
         console.log(inspect(c, true, Infinity));
     },
+    load(id, options) {
+        console.log("LOAD", id, options)
+    },
 }] as PluginOption;
