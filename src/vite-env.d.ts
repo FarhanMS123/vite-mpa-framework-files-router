@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import type ReactDOM from 'react-dom/client'
 
 /// <reference types="vite/client" />
