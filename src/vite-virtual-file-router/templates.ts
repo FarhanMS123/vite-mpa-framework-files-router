@@ -2,6 +2,7 @@ import { readFile } from "fs/promises";
 import { PREFIX_X00, type RawFunc, type InputValue, type Option, InputValue_Virtual } from "./files-router";
 import {  } from "path/posix";
 import { join, isAbsolute, relative, dirname, basename } from "path";
+import type {Options as FGOptions} from "fast-glob";
 
 // be* is configure the `out` by `script_src`; with no respect to default `out`
 // load* is configure `input` and `return` by `script_src`; respect to/without modifying the `out`
@@ -83,6 +84,17 @@ export const src2page = ({
 export const pattern_vue = "{,**/}*.page.vue";
 export const vue_main = () => readFile(join(__dir, "template/main_vue.ts"), { encoding: "utf8" });
 
-export const defaultExcluded = ["{,**/}.git/**", "{,**/}*.local{,/**}", "src/**", "dist/**", "node_modules/**", "public/**"];
-export const defaultIncluded = [pattern_html, pattern_jsx_tsx, pattern_js_ts];
-export const extendedIncluded = [pattern_html, pattern_jsx_tsx, pattern_vue, "{,**/}*.md", pattern_js_ts];
+export const defaultExcluded = ["{,**/}.git/**", "{,**/}{,*}.local{,/**}", "src/**", "dist/**", "node_modules/**", "public/**"];
+export const defaultIncluded = [pattern_jsx_tsx, pattern_js_ts, pattern_html];
+export const extendedIncluded = [pattern_jsx_tsx, pattern_vue, "{,**/}*.md", pattern_js_ts, pattern_html,];
+
+export const mmDefaultOpts: FGOptions = {
+    ignore: defaultExcluded,
+    onlyFiles: true,
+    onlyDirectories: false,
+    markDirectories: true,
+    caseSensitiveMatch: false,
+    dot: true,
+    globstar: true,
+    extglob: true,
+};
