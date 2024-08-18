@@ -110,9 +110,11 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
              * must be handled.
              */
             async resolveId(source, importer, options) {
-                const ret = input[source]?.out ?? input[`\0${source}`]?.out ?? source
+                const virtual = input[source]?.out ?? input[`\0${source}`]?.out;
+                const ret = virtual ?? source;
                 try {
-                    await fsAccess(isAbsolute(ret) ? ret : join(config.root!, ret), fsConst.F_OK)
+                    if (virtual) "";
+                    else await fsAccess(isAbsolute(ret) ? ret : join(config.root!, ret), fsConst.F_OK)
                     return ret;
                 } catch {
                     return undefined

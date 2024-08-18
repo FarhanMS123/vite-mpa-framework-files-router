@@ -27,8 +27,8 @@ export const abs2rel = (cwd: string, src: string) => isAbsolute(src) ? relative(
 
 export type SRC2PAGE_params = {
     cwd: string,
-    script_src: string, 
-    index_out?: string, 
+    script_src: string,
+    index_out?: string,
     main_out?: {
         out?: string;
         raw: RawFunc;
@@ -36,7 +36,7 @@ export type SRC2PAGE_params = {
 };
 export const src2page = ({
     cwd,
-    index_out, 
+    index_out,
     script_src,
     main_out,
     raw_html,
