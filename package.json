@@ -41,7 +41,8 @@
     "vite-virtual-file-router": "workspace:*"
   },
   "peerDependencies": {
-    "scheduler": "^0.23.2"
+    "scheduler": "^0.23.2",
+    "create-vite": "5.3.0"
   },
   "dependenciesMeta": {
     "vite-virtual-file-router": {

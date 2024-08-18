@@ -50,3 +50,18 @@ module.exports = {
 
 7. Add `["ESNext", "DOM"]` to `compilerOptions.lib` in `tsconfig.node.json`
 8. Exclude `src/utils/main_**` in both `tsconfig.json` and `tsconfig.node.json`
+
+## Development
+
+- using `create-vite@5.3.0`
+- minimal configuration
+  - `.eslintrc.cjs` -> ignore src, and disable strict rules
+  - `tsconfig.node.json` -> ignore and include
+  - `.npmrc`
+  - `pnpm-workspace.yaml`
+  - `src/vite-env.d.ts`
+- major configuration
+  - `vite.config.ts` -> major
+  - `package.json`
+- can be ignore
+  - `tsconfig.app.json`
