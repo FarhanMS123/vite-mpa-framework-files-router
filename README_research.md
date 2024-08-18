@@ -173,6 +173,8 @@ filename.levelA.levelB.levelC_ext_#
 - https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html
 - KEYWORD: man bash pattern matching
 
+- https://github.com/vitejs/vite/issues/6215
+
 ---
 
 ## Compilation Error

@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { type ConfigEnv, type PluginOption, type UserConfig } from "vite";
+import { join, isAbsolute } from "path";
+import { access as fsAccess, constants as fsConst } from "fs/promises";
 
 // #region TYPES ##################################################################
 
@@ -107,8 +109,14 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
              * As in file, it should reference as prefix without \x00. This also
              * must be handled.
              */
-            resolveId(source, importer, options) {
-                return input[source]?.out ?? input[`\0${source}`]?.out ?? source;
+            async resolveId(source, importer, options) {
+                const ret = input[source]?.out ?? input[`\0${source}`]?.out ?? source
+                try {
+                    await fsAccess(isAbsolute(ret) ? ret : join(config.root!, ret), fsConst.F_OK)
+                    return ret;
+                } catch {
+                    return undefined
+                }
             },
 
             /**

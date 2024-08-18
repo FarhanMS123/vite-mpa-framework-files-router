@@ -84,7 +84,7 @@ export const src2page = ({
 export const pattern_vue = "{,**/}*.page.vue";
 export const vue_main = () => readFile(join(__dir, "template/main_vue.ts"), { encoding: "utf8" });
 
-export const defaultExcluded = ["{,**/}.git/**", "{,**/}{,*}.local{,/**}", "src/**", "dist/**", "node_modules/**", "public/**"];
+export const defaultExcluded = ["{,**/}.git/**", "{,**/}{,*}.local{,/**}", "src/**", "dist/**", "node_modules/**", "public/**", "vite.config.*.*"];
 export const defaultIncluded = [pattern_jsx_tsx, pattern_js_ts, pattern_html];
 export const extendedIncluded = [pattern_jsx_tsx, pattern_vue, "{,**/}*.md", pattern_js_ts, pattern_html,];
 
