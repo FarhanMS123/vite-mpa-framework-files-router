@@ -1,14 +1,24 @@
 {
   "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2020",
+    "downlevelIteration": true,
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": ["ES2020", "DOM", "DOM.Iterable", "ES2021.String", "WebWorker"],
+    "allowJs": true,
+    "checkJs": true,
     "module": "ESNext",
     "skipLibCheck": true,
+    "incremental": true,
+    "noUncheckedIndexedAccess": true,
 
     /* Bundler mode */
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
     "isolatedModules": true,
     "moduleDetection": "force",
     "noEmit": true,
@@ -16,14 +26,18 @@
 
     /* Linting */
     "strict": true,
+    "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
+    "baseUrl": ".",
+    "outDir": "./dist",
     "paths": {
       "~/*": ["./src/*"],
       "~o/*": ["./src/*"],
     }
   },
-  "include": ["src"]
+  "include": ["**/*.ts", "**/*.js", "**/*.tsx", "**/*.jsx", "**/*.json"],
+  "exclude": ["node_modules"],
 }
