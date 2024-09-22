@@ -104,21 +104,20 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
              * This plugin would insert virtual file name such `\x00virtual-prefix:out-file`
              * or something plugind defined into `config.build.rollupOptions.input`.
              * This self defined file name also stored as key and for
-             * identification. As such, this resolveId would only need 
+             * identification. As such, this resolveId would only need
              * to find `source` to related id. No need for `${PREFIX}${source}`
              * As in file, it should reference as prefix without \x00. This also
              * must be handled.
              */
             async resolveId(source, importer, options) {
-                const virtual = input[source]?.out ?? input[`\0${source}`]?.out;
-                const ret = virtual ?? source;
-                try {
-                    if (virtual) "";
-                    else await fsAccess(isAbsolute(ret) ? ret : join(config.root!, ret), fsConst.F_OK)
-                    return ret;
-                } catch {
-                    return undefined
-                }
+                const virtual = input[source] ?? input[`\0${source}`];
+
+                // if (source.match(/(\.tsx|\.html)/i)) console.log({source, importer, options})
+
+                // if (!virtual || virtual.inject == "file") return;
+                if (!(virtual && (virtual.inject == "virtual_index" || virtual.inject == "virtual_resource" || !virtual.inject))) return;
+                // console.log({source, importer, options})
+                return virtual.out ?? undefined;
             },
 
             /**
@@ -132,6 +131,7 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
              */
             async load(id, options) {
                 const _input = input[`${PREFIX_X00}${id}`] as InputValue_Virtual;
+                // console.log(`LOAD: ${!!_input} ${id}`)
                 if (!_input) return;
                 _input.labels ??= {};
                 _input.labels.__id = id;

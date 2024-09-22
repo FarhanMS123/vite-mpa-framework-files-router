@@ -1,7 +1,7 @@
 import { readFile } from "fs/promises";
-import { PREFIX_X00, type RawFunc, type InputValue, type Option, InputValue_Virtual } from "./files-router";
-import {  } from "path/posix";
-import { join, isAbsolute, relative, dirname, basename } from "path";
+import { type RawFunc, type InputValue, InputValue_Virtual } from "./files-router";
+import { join } from "path/posix";
+import { isAbsolute, relative } from "path";
 import type {Options as FGOptions} from "fast-glob";
 
 // be* is configure the `out` by `script_src`; with no respect to default `out`
@@ -20,6 +20,7 @@ export const jtx_main = () => readFile(join(__dir, "template/main_react.tsx"), {
 
 export const __dir = __dirname;
 export const pattern_out_html = "*.page.*.html";
+export const pattern_out_just_html = "*.html.page.*.html";
 export const pattern_index_page_html = "index.page.*.html";
 export const pattern_html = "{,**/}*.html";
 
@@ -53,7 +54,7 @@ export const src2page = ({
         ret.push({
             inject: "virtual_resource",
             out: main_out.out,
-            raw: async (...params) => (await main_out.raw(...params))?.replace(/%SCRIPT_SRC%/g, script_src),
+            raw: async (...params) => (await main_out.raw(...params))?.replace(/%SCRIPT_SRC%/g, join(cwd, script_src)),
             virtuals, labels,
         });
     }
@@ -63,7 +64,7 @@ export const src2page = ({
         out: index_out,
         raw: async (...params) => {
             let raw = await raw_html?.(...params) ?? await readFile(join(__dir, "template/minimal.html"), { encoding: "utf8" })
-            if (!main_out?.out) raw = raw.replaceAll(/%SCRIPT_SRC%/g, script_src);
+            if (!main_out?.out) raw = raw.replaceAll(/%SCRIPT_SRC%/g, join(cwd, script_src));
             return raw;
         },
         virtuals: {

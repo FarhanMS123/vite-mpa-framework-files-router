@@ -4,8 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "workspaces": [
-    "src/vite-virtual-file-router",
-    "src/vite-multiple-assets"
+    "src/vite-virtual-file-router"
   ],
   "scripts": {
     "dev": "vite",
@@ -36,7 +35,6 @@
     "micromatch": "^4.0.7",
     "typescript": "^5.2.2",
     "vite": "^5.3.1",
-    "vite-multiple-assets": "workspace:*",
     "vite-plugin-inspect": "^0.8.1",
     "vite-virtual-file-router": "workspace:*"
   },
@@ -46,9 +44,6 @@
   },
   "dependenciesMeta": {
     "vite-virtual-file-router": {
-      "injected": true
-    },
-    "vite-multiple-assets": {
       "injected": true
     }
   }
