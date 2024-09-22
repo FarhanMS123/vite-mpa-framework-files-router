@@ -5,8 +5,8 @@ import { FluentProvider, makeStyles, mergeClasses, teamsDarkTheme, tokens } from
 
 // import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
 // import 'overlayscrollbars/overlayscrollbars.css';
-import "libs/tailwind_global.css";
-import "libs/fui_docs/main.css";
+import "~o/libs/tailwind_global.css";
+import "~/libs/fui_docs/main.css";
 
 export const useProvidersStyles = makeStyles({
   root: {
