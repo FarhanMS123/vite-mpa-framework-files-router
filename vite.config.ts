@@ -7,8 +7,8 @@ import { type InputValue, __prepare_cbro_input, __push_rollup_input, virtualRout
 import fg from "fast-glob";
 import mm from "micromatch"
 import path from "path";
-import { abs2rel, defaultExcluded, defaultIncluded, jtx_main, mmDefaultOpts, pattern_html, pattern_index_page_html, 
-          pattern_js_ts, pattern_jsx_tsx, pattern_out_html, src2page } from './src/vite-virtual-file-router/templates'
+import { abs2rel, defaultIncluded, jtx_main, mmDefaultOpts, pattern_html, pattern_index_page_html, 
+          pattern_js_ts, pattern_jsx_tsx, pattern_out_html, pattern_out_just_html, src2page } from './src/vite-virtual-file-router/templates'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -22,6 +22,7 @@ export default defineConfig({
       const pattern = [...defaultIncluded];
       const mmOpts: fg.Options = {
         ...mmDefaultOpts,
+        ignore: [...(mmDefaultOpts.ignore ?? []), "template/**"],
         cwd,
       };
       const _files = await fg(pattern, mmOpts);
@@ -29,17 +30,20 @@ export default defineConfig({
       for ( const script_src of _files ) {
         const __files: InputValue[] = [];
         if (mm.isMatch(script_src, pattern_js_ts, mmOpts))
-          __files.push(...src2page({ cwd, script_src }));
+          __files.push(...await src2page({ cwd, script_src }));
         else if (mm.isMatch(script_src, pattern_jsx_tsx, mmOpts))
-          __files.push(...src2page({ cwd, script_src, main_out: { out: `${abs2rel(cwd, script_src)}.tsx`, raw: jtx_main } }))
+          __files.push(...await src2page({ cwd, script_src, main_out: { out: `${abs2rel(cwd, script_src)}.tsx`, raw: jtx_main } }))
         else if (mm.isMatch(script_src, pattern_html, mmOpts))
           __push_rollup_input(cbro_input, path.resolve(script_src))
 
+        const _mmOpts = {...mmOpts, basename: true};
         for (const file of __files)
           if (file.inject != "file") {
-            if (mm.isMatch(file.out, pattern_index_page_html, {...mmOpts, basename: true}))
+            if (mm.isMatch(file.out, pattern_index_page_html, _mmOpts))
               file.out = `${file.out.replaceAll(/\.page\.\w+\.html$/ig, "")}.html`;
-            else if (mm.isMatch(file.out, pattern_out_html, {...mmOpts, basename: true}))
+            else if (mm.isMatch(file.out, pattern_out_just_html, _mmOpts))
+              file.out = `${file.out.replaceAll(/\.html\.page\.\w+\.html$/ig, "")}.html`;
+            else if (mm.isMatch(file.out, pattern_out_html, _mmOpts))
               file.out = `${file.out.replaceAll(/\.page\.\w+\.html$/ig, "")}/index.html`;
           }
         

@@ -1,4 +1,4 @@
-import { readFile } from "fs/promises";
+import { readFile, access as fsAccess, constants as fsConst } from "fs/promises";
 import { type RawFunc, type InputValue, InputValue_Virtual } from "./files-router";
 import { join } from "path/posix";
 import { isAbsolute, relative } from "path";
@@ -25,6 +25,13 @@ export const pattern_index_page_html = "index.page.*.html";
 export const pattern_html = "{,**/}*.html";
 
 export const abs2rel = (cwd: string, src: string) => isAbsolute(src) ? relative(cwd, src) : src;
+export const rel2abs = async (cwd: string, src: string) => {
+    if(isAbsolute(src)) try {
+        await fsAccess(src, fsConst.F_OK)
+        return src;
+    } catch {};
+    return join(cwd, src)
+};
 
 export type SRC2PAGE_params = {
     cwd: string,
@@ -35,7 +42,7 @@ export type SRC2PAGE_params = {
         raw: RawFunc;
     },
 };
-export const src2page = ({
+export const src2page = async ({
     cwd,
     index_out,
     script_src,
@@ -54,7 +61,7 @@ export const src2page = ({
         ret.push({
             inject: "virtual_resource",
             out: main_out.out,
-            raw: async (...params) => (await main_out.raw(...params))?.replace(/%SCRIPT_SRC%/g, join(cwd, script_src)),
+            raw: async (...params) => (await main_out.raw(...params))?.replace(/%SCRIPT_SRC%/g, await rel2abs(cwd, script_src)),
             virtuals, labels,
         });
     }
@@ -64,7 +71,7 @@ export const src2page = ({
         out: index_out,
         raw: async (...params) => {
             let raw = await raw_html?.(...params) ?? await readFile(join(__dir, "template/minimal.html"), { encoding: "utf8" })
-            if (!main_out?.out) raw = raw.replaceAll(/%SCRIPT_SRC%/g, join(cwd, script_src));
+            if (!main_out?.out) raw = raw.replaceAll(/%SCRIPT_SRC%/g, await rel2abs(cwd, script_src));
             return raw;
         },
         virtuals: {

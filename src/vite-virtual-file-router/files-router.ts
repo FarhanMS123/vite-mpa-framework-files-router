@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { type ConfigEnv, type PluginOption, type UserConfig } from "vite";
-import { join, isAbsolute } from "path";
-import { access as fsAccess, constants as fsConst } from "fs/promises";
 
 // #region TYPES ##################################################################
 
@@ -21,6 +19,14 @@ export type InputValue_File = {
     out: string;
 };
 export type InputValue = InputValue_Virtual | InputValue_File;
+
+
+export type InputSources = Record<string, InputValue>; // { id: InputValue }
+export type Option = {
+    files: InputValue[];
+};
+
+
 export type DebugParams = {
     __call?: number,
     config: UserConfig;
@@ -30,10 +36,6 @@ export type DebugParams = {
 export type RawFunc = (params: {
     current: InputValue;
 } & DebugParams) => string | undefined | Promise<string | undefined>;
-export type InputSources = Record<string, InputValue>; // { id: InputValue }
-export type Option = {
-    files: InputValue[];
-};
 export type OptsFunc = (params: {
     __input: Record<string, InputValue>; // previous input
 } & DebugParams) => Option | Promise<Option>;
@@ -102,21 +104,20 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
              * or has `null` in the `out`put. As such condition meet,
              * it would going with source.
              * This plugin would insert virtual file name such `\x00virtual-prefix:out-file`
-             * or something plugind defined into `config.build.rollupOptions.input`.
+             * or something plugin defined into `config.build.rollupOptions.input`.
              * This self defined file name also stored as key and for
-             * identification. As such, this resolveId would only need
-             * to find `source` to related id. No need for `${PREFIX}${source}`
-             * As in file, it should reference as prefix without \x00. This also
-             * must be handled.
+             * identification. As such, this resolveId would need to 
+             * find `${source}` for virtual index, xor `\0${source}` 
+             * for virtual module that come from `src` or `import`.
+             * 
+             * we should agree that source would come directly from input which has PREFIX_X00
+             * or come from a file that src to virtual which have no \x00 in it.
+             * So it rather has: `\0vvfr-pre:` or `vvfr-pre:`
              */
             async resolveId(source, importer, options) {
                 const virtual = input[source] ?? input[`\0${source}`];
+                if (!virtual || virtual.inject == "file") return;
 
-                // if (source.match(/(\.tsx|\.html)/i)) console.log({source, importer, options})
-
-                // if (!virtual || virtual.inject == "file") return;
-                if (!(virtual && (virtual.inject == "virtual_index" || virtual.inject == "virtual_resource" || !virtual.inject))) return;
-                // console.log({source, importer, options})
                 return virtual.out ?? undefined;
             },
 
@@ -124,26 +125,32 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
              * This only load virtual prefix.
              * After input constructed, user can define new input without prefix
              * and decide `out`put as `null`. This load would not process any key
-             * that is not use PREFIX.
-             * All resolved Id would be in the form of file path without prefix.
+             * that is not use PREFIX. We must agree that id is everything that 
+             * has been resolved and is a path with no prefix.
+             * All resolved Id would be in the form of file path with no prefix.
              * As such, it need to compare the id with combined prefix. This load
              * only need to find all virtuals and matching its metadata.
              */
             async load(id, options) {
                 const _input = input[`${PREFIX_X00}${id}`] as InputValue_Virtual;
-                // console.log(`LOAD: ${!!_input} ${id}`)
                 if (!_input) return;
+
                 _input.labels ??= {};
                 _input.labels.__id = id;
                 _input.labels.__options = options;
+
                 let raw = await _input?.raw?.({ config, env, current: _input, input });
                 if (!raw) return;
+                
+                // virtual module need a prefix but without `\0`
                 for (const [SCRIPT_SRC, file_relative] of Object.entries(_input.virtuals ?? {}))
                     raw = raw.replaceAll(RegExp(`%${SCRIPT_SRC}%`, "g"), `${PREFIX}${file_relative}`);
+
                 for (const [key, val] of Object.entries({ ...config.define, ..._input.labels }))
                     // typeof val != "object" && typeof val != "function
                     // should only string, but how about symbols and undefined?
                     if (val && typeof val != "object" && typeof val != "function") raw = raw.replaceAll(RegExp(`%${key}%`, "g"), val.toString());
+
                 return raw;
             },
         }
