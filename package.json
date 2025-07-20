@@ -40,8 +40,7 @@
     "micromatch": "^4.0.7",
     "typescript": "^5.2.2",
     "vite": "^5.3.1",
-    "vite-plugin-inspect": "^0.8.1",
-    "vite-virtual-file-router": "workspace:*"
+    "vite-plugin-inspect": "^0.8.1"
   },
   "peerDependencies": {
     "vue": "^3.4.29",

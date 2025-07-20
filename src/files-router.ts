@@ -4,7 +4,6 @@ import { type ConfigEnv, type PluginOption, type UserConfig } from "vite";
 // #region TYPES ##################################################################
 
 export type InputValue_Virtual = {
-    inject?: "virtual_index" | "virtual_resource"; // defult: "virtual_index"; virtual_resource would not injected
     out: string;
     raw: RawFunc;
     labels?: Record<string, unknown> & Partial<{
@@ -88,10 +87,8 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                 }
 
                 for (let file of opts.files) {
-                    file.inject ??= "virtual_index";
-                    const virtual = file.inject == "file" ? file.out : `${PREFIX_X00}${file.out}`;
+                    const virtual = `${PREFIX_X00}${file.out}`;
                     input[virtual] = file;
-                    if (file.inject == "virtual_index" || file.inject == "file") __push_rollup_input(cbro_input, virtual);
                 }
             },
 
@@ -116,7 +113,7 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
              */
             async resolveId(source, importer, options) {
                 const virtual = input[source] ?? input[`\0${source}`];
-                if (!virtual || virtual.inject == "file") return;
+                if (!virtual) return;
 
                 return virtual.out ?? undefined;
             },
