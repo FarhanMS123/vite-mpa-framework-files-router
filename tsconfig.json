@@ -1,16 +1,7 @@
 {
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.node.json"
-    }
-  ],
   "compilerOptions": {
     "composite": true,
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
     "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": ["ES2020", "ESNext", "DOM", "DOM.Iterable", "ES2021.String"],
@@ -37,13 +28,8 @@
     "baseUrl": ".",
     "esModuleInterop": true,
     "outDir": "./dist",
-    "paths": {
-      "~/*": ["./*"],
-      "~vite-multiple-assets/*": ["./src/vite-multiple-assets/*"],
-      "~vite-virtual-file-router/*": ["./src/vite-virtual-file-router/*"]
-    }
+    "paths": {}
   },
-  "include": ["**/*.ts", "**/*.js", "**/*.tsx", "**/*.jsx"],
-  "exclude": ["src/**", "node_modules"],
-  "include": ["vite.config.ts", "src", "node_modules/**/*.ts"]
+  "include": ["src/*.ts"],
+  "exclude": ["node_modules"],
 }

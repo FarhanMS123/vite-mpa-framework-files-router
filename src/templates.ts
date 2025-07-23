@@ -29,7 +29,7 @@ export const rel2abs = async (cwd: string, src: string) => {
     if(isAbsolute(src)) try {
         await fsAccess(src, fsConst.F_OK)
         return src;
-    } catch {};
+    } catch { /* empty */ }
     return join(cwd, src)
 };
 
@@ -52,14 +52,13 @@ export const src2page = async ({
 }: {
     raw_html?: RawFunc;
 } & SRC2PAGE_params & Pick<InputValue_Virtual, "labels" | "virtuals">) => { // handle virtuals, not env vars
-    let ret: InputValue[] = [];
+    const ret: InputValue[] = [];
 
     index_out ??= `${abs2rel(cwd, script_src)}.html`;
 
     if (main_out) {
         main_out.out ??= `${abs2rel(cwd, script_src)}.ts`;
         ret.push({
-            inject: "virtual_resource",
             out: main_out.out,
             raw: async (...params) => (await main_out.raw(...params))?.replace(/%SCRIPT_SRC%/g, await rel2abs(cwd, script_src)),
             virtuals, labels,
@@ -67,7 +66,6 @@ export const src2page = async ({
     }
 
     ret.unshift({
-        inject: "virtual_index",
         out: index_out,
         raw: async (...params) => {
             let raw = await raw_html?.(...params) ?? await readFile(join(__dir, "template/minimal.html"), { encoding: "utf8" })

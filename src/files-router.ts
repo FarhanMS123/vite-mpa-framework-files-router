@@ -13,11 +13,7 @@ export type InputValue_Virtual = {
     }>;
     virtuals?: Record<string, string>; // { SCRIPT_SRC: file_relative }
 };
-export type InputValue_File = {
-    inject: "file";
-    out: string;
-};
-export type InputValue = InputValue_Virtual | InputValue_File;
+export type InputValue = InputValue_Virtual;
 
 
 export type InputSources = Record<string, InputValue>; // { id: InputValue }
@@ -86,7 +82,7 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                     opts = await _opts({ __call: ++__call_opts, config, env, input, __input });
                 }
 
-                for (let file of opts.files) {
+                for (const file of opts.files) {
                     const virtual = `${PREFIX_X00}${file.out}`;
                     input[virtual] = file;
                 }
