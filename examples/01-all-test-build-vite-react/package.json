@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "prepare:upper": "shx 'cd ../.. && npm run build:tsc && npm run pack'",
-    "prepare:module": "npm run prepare:upper && npm uninstall vite-plugin-virtual-files && npm i ../../package.json && shx rm ../../package-*.tgz",
+    "prepare:upper": "pushd . && cd ../.. && npm run build:tsc && (shx rm package.tgz || echo .) && npm run pack && popd",
+    "prepare:module": "npm uninstall vite-plugin-virtual-files && npm i --legacy-peer-deps ../../package.tgz && (shx rm ../../package.tgz || echo .)",
+    "prepare": "npm run prepare:upper && npm run prepare:module",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
@@ -13,7 +14,8 @@
   },
   "dependencies": {
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "vite-plugin-virtual-files": "file:../../package.tgz"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
