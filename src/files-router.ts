@@ -85,6 +85,7 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                 for (const file of opts.files) {
                     const virtual = `${PREFIX_X00}${file.out}`;
                     input[virtual] = file;
+                    __push_rollup_input(cbro_input, virtual);
                 }
             },
 

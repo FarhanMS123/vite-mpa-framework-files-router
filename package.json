@@ -3,9 +3,6 @@
   "private": false,
   "version": "0.0.1",
   "type": "module",
-  "workspaces": [
-    "src/vite-virtual-file-router"
-  ],
   "description": "Virtual files inclusion with few basic html root template",
   "main": "dist/files-router.js",
   "module": "src/files-router.ts",
@@ -53,10 +50,5 @@
   "files": [
     "dist", "src",
     "README.md", "tsconfig.json", ".npmignore", ".gitignore", ".eslintrc.cjs"
-  ],
-  "exports": {
-    "./files-router": "./dist/files-router.ts",
-    "./template/helper": "./dist/template/helper.ts",
-    "./templates": "./dist/templates.ts"
-  }
+  ]
 }
