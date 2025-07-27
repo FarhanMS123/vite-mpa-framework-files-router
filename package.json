@@ -13,6 +13,7 @@
   "scripts": {
     "build": "npm run build:tsc && npm run cp:meta && npm run cp:src",
     "build:tsc": "tsc -b",
+    "pack": "npm pack && shx mv vite-plugin-virtual-files-*.tgz package.tgz",
     "cp:meta": "shx cp package.json README.md tsconfig.json .eslintrc.cjs .gitignore .npmignore dist/",
     "cp:src": "shx cp src/** dist"
   },
