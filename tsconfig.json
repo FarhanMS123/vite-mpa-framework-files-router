@@ -29,5 +29,5 @@
     "paths": {}
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "src/template/**"],
+  "exclude": ["node_modules"],
 }
