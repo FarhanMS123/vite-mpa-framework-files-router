@@ -6,6 +6,7 @@ import { type ConfigEnv, type PluginOption, type UserConfig } from "vite";
 export type InputValue_Virtual = {
     out: string;
     raw: RawFunc;
+    isRollupInput?: false;
     labels?: Record<string, unknown> & Partial<{
         __call: number;
         __id: string;
@@ -85,7 +86,7 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                 for (const file of opts.files) {
                     const virtual = `${PREFIX_X00}${file.out}`;
                     input[virtual] = file;
-                    __push_rollup_input(cbro_input, virtual);
+                    if(file.isRollupInput != false) __push_rollup_input(cbro_input, virtual);
                 }
             },
 
