@@ -111,6 +111,8 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
              */
             async resolveId(source, importer, options) {
                 const virtual = input[source] ?? input[`\0${source}`];
+
+                console.log("resolveId", source, !!virtual, importer, options);
                 if (!virtual) return;
 
                 return virtual.out ?? undefined;
@@ -146,6 +148,7 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                     // should only string, but how about symbols and undefined?
                     if (val && typeof val != "object" && typeof val != "function") raw = raw.replaceAll(RegExp(`%${key}%`, "g"), val.toString());
 
+                // console.log("load", id, raw);
                 return raw;
             },
         }
