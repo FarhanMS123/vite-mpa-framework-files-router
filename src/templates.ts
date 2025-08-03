@@ -34,7 +34,6 @@ export const rel2abs = async (cwd: string, src: string) => {
 };
 
 export type SRC2PAGE_params = {
-    cwd: string,
     script_src: string,
     index_out?: string,
     main_out?: {
@@ -44,7 +43,6 @@ export type SRC2PAGE_params = {
     },
 };
 export const src2page = async ({
-    cwd,
     index_out,
     script_src,
     main_out,
