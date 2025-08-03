@@ -69,3 +69,18 @@ module.exports = {
   - `package.json`
 - can be ignore
   - `tsconfig.app.json`
+
+### ToDo
+
+- [x] cleanup, examples install from .tgz
+- [x] make simple sample
+- [ ] adjust templating
+- [ ] vite ts could import js
+- [ ] vite ts could import ts
+- [ ] vite js could import js and ts
+- [ ] vite mjs could import js and ts
+- [ ] vite cjs could import js and ts
+- [ ] working with auto import by glob
+- [ ] uninstall glob and micromatch, and install as peer
+- [ ] update README and remove the development phase
+- [ ] upload to npmjs

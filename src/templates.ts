@@ -1,7 +1,8 @@
 import { readFile, access as fsAccess, constants as fsConst } from "fs/promises";
 import { type RawFunc, type InputValue, InputValue_Virtual } from "./files-router";
 import { join } from "path/posix";
-import { isAbsolute, relative } from "path";
+import { fileURLToPath } from 'url';
+import { isAbsolute, relative, dirname, join as joinOri } from "path";
 import type {Options as FGOptions} from "fast-glob";
 
 // be* is configure the `out` by `script_src`; with no respect to default `out`
@@ -16,9 +17,12 @@ export type MetaCrawler = {
 
 export const pattern_js_ts = "{,**/}*.page.{ts,js,jsm}";
 export const pattern_jsx_tsx = "{,**/}*.page.{tsx,jsx}";
-export const jtx_main = () => readFile(join(__dir, "template/main_react.tsx"), { encoding: "utf8" });
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 export const __dir = __dirname;
+export const jtx_main = readFile(joinOri(__dir, "../src/template/main_react.tsx"), { encoding: "utf8" });
+
 export const pattern_out_html = "*.page.*.html";
 export const pattern_out_just_html = "*.html.page.*.html";
 export const pattern_index_page_html = "index.page.*.html";
@@ -72,7 +76,7 @@ export const src2page = async ({
 
     ret.unshift({
         out: index_out,
-        raw: raw_html ?? ((...params) => readFile(join(__dir, "template/withroot.html"), { encoding: "utf8" })),
+        raw: raw_html ?? ((...params) => readFile(joinOri(__dir, "template/withroot.html"), { encoding: "utf8" })),
         virtuals: {
             SCRIPT_SRC: main_out?.out ?? undefined,
             ...virtuals,
@@ -92,7 +96,7 @@ export const src2page = async ({
 //                  -> **/home.page.vue.html, ...
 //                  -> **/home/index.html, **/home.page.vue.main.ts, **/home.page.vue
 export const pattern_vue = "{,**/}*.page.vue";
-export const vue_main = () => readFile(join(__dir, "template/main_vue.ts"), { encoding: "utf8" });
+export const vue_main = () => readFile(joinOri(__dir, "template/main_vue.ts"), { encoding: "utf8" });
 
 export const defaultExcluded = ["{,**/}.git/**", "{,**/}{,*}.local{,/**}", "src/**", "dist/**", "node_modules/**", "public/**", "vite.config.*.*"];
 export const defaultIncluded = [pattern_jsx_tsx, pattern_js_ts, pattern_html];
