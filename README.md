@@ -74,7 +74,9 @@ module.exports = {
 
 - [x] cleanup, examples install from .tgz
 - [x] make simple sample
-- [ ] adjust templating
+- [x] adjust templating to run new file router
+- [ ] cleanup and refactoring templating
+- [ ] cleanup and refactoring file router
 - [ ] vite ts could import js
 - [ ] vite ts could import ts
 - [ ] vite js could import js and ts
