@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { type ConfigEnv, type PluginOption, type UserConfig } from "vite";
+import path from "node:path";
+import fs from "node:fs";
+import { sync as resolveSync } from "resolve";
 
 // #region TYPES ##################################################################
 
@@ -7,6 +10,7 @@ export type InputValue_Virtual = {
     out: string;
     raw: RawFunc;
     isRollupInput?: false;
+    dirname?: string;
     labels?: Record<string, unknown> & Partial<{
         __call: number;
         __id: string;
@@ -88,6 +92,8 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                     input[virtual] = file;
                     if(file.isRollupInput != false) __push_rollup_input(cbro_input, virtual);
                 }
+
+                // console.log(input);
             },
 
             configResolved(_config) {
@@ -110,12 +116,23 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
              * So it rather has: `\0vvfr-pre:` or `vvfr-pre:`
              */
             async resolveId(source, importer, options) {
-                const virtual = input[source] ?? input[`\0${source}`];
+                // TODO: why I need to check both condition? Would ever source and importer is begin by '\0'?
+                // TODO: does this order of `if` is right? Seems wrong.
+                // NOTE: importer should have no prefix right? straight to filename
 
-                console.log("resolveId", source, !!virtual, importer, options);
-                if (!virtual) return;
+                if (source in input || `\0${source}` in input) {
+                    const virtual = input[source] ?? input[`\0${source}`];
+                    console.log("resolveId::1", source, !!virtual, importer, options);
+                    return virtual.out ?? undefined;
+                } else if (`${PREFIX}${importer}` in input || `${PREFIX_X00}${importer}` in input) { // this is for there is virtual module importing relative path
+                    const virtual = input[`${PREFIX}${importer}`] ?? input[`${PREFIX_X00}${importer}`];
+                    console.log("resolveId::2", source, !!virtual, virtual.dirname, importer, options);
+                    const imported = path.join(virtual.dirname!, source);
+                    // return `${imported}${path.extname(importer!)}`;
+                    return `${imported}.ts`;
+                }
 
-                return virtual.out ?? undefined;
+                console.log("resolveId::0", source, false, importer, options);
             },
 
             /**

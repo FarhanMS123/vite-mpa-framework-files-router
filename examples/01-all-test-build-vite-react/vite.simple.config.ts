@@ -33,6 +33,7 @@ export default defineConfig({
         },
         {
           out: "test/page-name-1.page.tsx.main_react.tsx",
+          dirname: "node_modules/vite-plugin-virtual-files/src/template",
           raw: () => fs.readFileSync("node_modules/vite-plugin-virtual-files/src/template/main_react.tsx").toString('utf-8'),
           isRollupInput: false,
           labels: {
