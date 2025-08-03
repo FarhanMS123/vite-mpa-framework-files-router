@@ -39,6 +39,7 @@ export type SRC2PAGE_params = {
     index_out?: string,
     main_out?: {
         out?: string;
+        basedir?: string;
         raw: RawFunc;
     },
 };
@@ -54,29 +55,34 @@ export const src2page = async ({
 } & SRC2PAGE_params & Pick<InputValue_Virtual, "labels" | "virtuals">) => { // handle virtuals, not env vars
     const ret: InputValue[] = [];
 
-    index_out ??= `${abs2rel(cwd, script_src)}.html`;
+    index_out ??= `${script_src}.html`;
 
     if (main_out) {
-        main_out.out ??= `${abs2rel(cwd, script_src)}.ts`;
+        main_out.out ??= `${script_src}.ts`;
         ret.push({
             out: main_out.out,
-            raw: async (...params) => (await main_out.raw(...params))?.replace(/%SCRIPT_SRC%/g, await rel2abs(cwd, script_src)),
-            virtuals, labels,
+            basedir: main_out.basedir,
+            isRollupInput: false,
+            raw: main_out.raw,
+            virtuals,
+            labels: {
+                ...labels,
+                SCRIPT_SRC: script_src,
+            },
         });
     }
 
     ret.unshift({
         out: index_out,
-        raw: async (...params) => {
-            let raw = await raw_html?.(...params) ?? await readFile(join(__dir, "template/minimal.html"), { encoding: "utf8" })
-            if (!main_out?.out) raw = raw.replaceAll(/%SCRIPT_SRC%/g, await rel2abs(cwd, script_src));
-            return raw;
-        },
+        raw: raw_html ?? ((...params) => readFile(join(__dir, "template/withroot.html"), { encoding: "utf8" })),
         virtuals: {
-            SCRIPT_SRC: main_out?.out ?? "%SCRIPT_SRC%",
+            SCRIPT_SRC: main_out?.out ?? undefined,
             ...virtuals,
         },
-        labels,
+        labels: {
+            SCRIPT_SRC: main_out?.out ? undefined : script_src,
+            ...labels,
+        },
     });
 
     return ret;

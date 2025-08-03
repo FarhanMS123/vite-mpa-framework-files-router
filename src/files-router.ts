@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { type ConfigEnv, type PluginOption, type UserConfig } from "vite";
 import path from "node:path";
-import fs from "node:fs";
 import resolve from "resolve";
 
 export type InputValue_Virtual = {
@@ -14,7 +13,7 @@ export type InputValue_Virtual = {
         __id: string;
         __options: unknown;
     }>;
-    virtuals?: Record<string, string>; // { SCRIPT_SRC: file_relative }
+    virtuals?: Record<string, string | undefined>; // { SCRIPT_SRC: file_relative }
 };
 export type InputValue = InputValue_Virtual;
 
@@ -90,8 +89,6 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                     input[virtual] = file;
                     if(file.isRollupInput != false) __push_rollup_input(cbro_input, virtual);
                 }
-
-                // console.log(input);
             },
 
             configResolved(_config) {
@@ -107,11 +104,15 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
              * This self defined file name also stored as key and for
              * identification. As such, this resolveId would need to 
              * find `${source}` for virtual index, xor `\0${source}` 
-             * for virtual module that come from `src` or `import`.
+             * for virtual module that come from script `src` or module `import`
+             * inside a file (of course, file cannot has `\0`).
              * 
              * we should agree that source would come directly from input which has PREFIX_X00
              * or come from a file that src to virtual which have no \x00 in it.
-             * So it rather has: `\0vvfr-pre:` or `vvfr-pre:`
+             * So it rather has: `\0vvfr-pre:` or `vvfr-pre:`. As importer has been
+             * resolved there is no prefix on it, we need to concat the prefix by
+             * ourself. This case on importing relative physical module from 
+             * virtual module.
              */
             async resolveId(source, importer, options) {
                 // TODO: why I need to check both condition? Would ever source and importer is begin by '\0'?
@@ -154,14 +155,15 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                 
                 // virtual module need a prefix but without `\0`
                 for (const [SCRIPT_SRC, file_relative] of Object.entries(_input.virtuals ?? {}))
-                    raw = raw.replaceAll(RegExp(`%${SCRIPT_SRC}%`, "g"), `${PREFIX}${file_relative}`);
+                    if (file_relative)
+                        raw = raw.replaceAll(RegExp(`%${SCRIPT_SRC}%`, "g"), `${PREFIX}${file_relative}`);
 
                 for (const [key, val] of Object.entries({ ...config.define, ..._input.labels }))
                     // typeof val != "object" && typeof val != "function
                     // should only string, but how about symbols and undefined?
-                    if (val && typeof val != "object" && typeof val != "function") raw = raw.replaceAll(RegExp(`%${key}%`, "g"), val.toString());
+                    if (val && typeof val != "object" && typeof val != "function")
+                        raw = raw.replaceAll(RegExp(`%${key}%`, "g"), val.toString());
 
-                // console.log("load", id, raw);
                 return raw;
             },
         }
