@@ -2,15 +2,13 @@
 import { type ConfigEnv, type PluginOption, type UserConfig } from "vite";
 import path from "node:path";
 import fs from "node:fs";
-import { sync as resolveSync } from "resolve";
-
-// #region TYPES ##################################################################
+import resolve from "resolve";
 
 export type InputValue_Virtual = {
     out: string;
     raw: RawFunc;
     isRollupInput?: false;
-    dirname?: string;
+    basedir?: string;
     labels?: Record<string, unknown> & Partial<{
         __call: number;
         __id: string;
@@ -122,17 +120,15 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
 
                 if (source in input || `\0${source}` in input) {
                     const virtual = input[source] ?? input[`\0${source}`];
-                    console.log("resolveId::1", source, !!virtual, importer, options);
                     return virtual.out ?? undefined;
                 } else if (`${PREFIX}${importer}` in input || `${PREFIX_X00}${importer}` in input) { // this is for there is virtual module importing relative path
                     const virtual = input[`${PREFIX}${importer}`] ?? input[`${PREFIX_X00}${importer}`];
-                    console.log("resolveId::2", source, !!virtual, virtual.dirname, importer, options);
-                    const imported = path.join(virtual.dirname!, source);
-                    // return `${imported}${path.extname(importer!)}`;
-                    return `${imported}.ts`;
+                    const imported = resolve.sync(source, {
+                        basedir: virtual.basedir,
+                        extensions: [path.extname(importer!), '.tsx', '.ts', '.jsx', '.mjs', '.js'],
+                    });
+                    return imported;
                 }
-
-                console.log("resolveId::0", source, false, importer, options);
             },
 
             /**
