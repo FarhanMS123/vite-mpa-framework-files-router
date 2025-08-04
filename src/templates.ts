@@ -28,15 +28,6 @@ export const pattern_out_just_html = "*.html.page.*.html";
 export const pattern_index_page_html = "index.page.*.html";
 export const pattern_html = "{,**/}*.html";
 
-export const abs2rel = (cwd: string, src: string) => isAbsolute(src) ? relative(cwd, src) : src;
-export const rel2abs = async (cwd: string, src: string) => {
-    if(isAbsolute(src)) try {
-        await fsAccess(src, fsConst.F_OK)
-        return src;
-    } catch { /* empty */ }
-    return join(cwd, src)
-};
-
 export type SRC2PAGE_params = {
     script_src: string,
     index_out?: string,
@@ -98,7 +89,7 @@ export const src2page = async ({
 export const pattern_vue = "{,**/}*.page.vue";
 export const vue_main = () => readFile(joinOri(__dir, "template/main_vue.ts"), { encoding: "utf8" });
 
-export const defaultExcluded = ["{,**/}.git/**", "{,**/}{,*}.local{,/**}", "src/**", "dist/**", "node_modules/**", "public/**", "vite.config.*.*"];
+export const defaultExcluded = ["{,**/}.git/**", "{,**/}{,*}.local{,/**}", "src/**", "dist/**", "node_modules/**", "public/**", "vite.config.*.*", "vite.*"];
 export const defaultIncluded = [pattern_jsx_tsx, pattern_js_ts, pattern_html];
 export const extendedIncluded = [pattern_jsx_tsx, pattern_vue, "{,**/}*.md", pattern_js_ts, pattern_html,];
 

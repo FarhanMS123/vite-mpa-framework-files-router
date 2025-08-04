@@ -77,11 +77,9 @@ module.exports = {
 - [x] adjust templating to run new file router
 - [ ] cleanup and refactoring templating
 - [ ] cleanup and refactoring file router
-- [ ] vite ts could import js
-- [ ] vite ts could import ts
-- [ ] vite js could import js and ts
-- [ ] vite mjs could import js and ts
-- [ ] vite cjs could import js and ts
+- [x] vite ts could import js (dist)
+- [ ] vite js, mjs, cjs could import js (dist)
+- [ ] vite ts could import ts (src)
 - [ ] working with auto import by glob
 - [ ] uninstall glob and micromatch, and install as peer
 - [ ] update README and remove the development phase
