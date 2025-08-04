@@ -25,5 +25,5 @@
     "baseUrl": ".",
     "esModuleInterop": true
   },
-  "include": ["vite.config.ts", "src", "node_modules/**/*.ts"]
+  "include": ["vite.simple.config.ts", "src", "node_modules/**/*.ts"]
 }

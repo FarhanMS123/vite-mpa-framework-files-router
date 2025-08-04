@@ -5,7 +5,7 @@
 - vite-mpa-framework-files-router
 
 > [!NOTE]  
-> It is a shame that I reinventing the wheel. Please take a look ad development / research has been done in main_v1. Else, you may need Tanstack Virtual File instead.
+> It is a shame that I reinventing the wheel. Please take a look ad development / research has been done in main_v1. Else, you may need Tanstack Virtual File Router instead.
 
 ## Development
 
@@ -20,6 +20,8 @@
 - [x] vite js, mjs, cjs could import js (dist)
 - [ ] vite ts could import ts (src)
 - [ ] working with auto import by glob
+- [ ] `tsc -b` build only to single vite config ts instead of all ts file
 - [x] uninstall glob and micromatch, and install as peer
 - [x] update README and remove the development phase
+- [ ] rename package to @beanprint/
 - [ ] upload to npmjs

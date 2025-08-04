@@ -7,11 +7,8 @@
     "prepare:upper": "pushd . && cd ../.. && npm run build:tsc && (shx rm package.tgz || echo .) && npm run pack && popd",
     "prepare:module": "npm uninstall vite-plugin-virtual-files && npm i --legacy-peer-deps ../../package.tgz && (shx rm ../../package.tgz || echo .)",
     "prepare": "npm run prepare:upper && npm run prepare:module",
-    "dev": "vite",
     "build": "tsc -b && vite build",
-    "build:simple": "npm run prepare && vite build -c",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "build:simple": "npm run prepare && && vite build -c"
   },
   "dependencies": {
     "react": "^19.1.0",
