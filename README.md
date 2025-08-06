@@ -16,11 +16,15 @@
 - [x] adjust templating to run new file router
 - [ ] cleanup and refactoring templating
 - [ ] cleanup and refactoring file router
+- [x] could be installed by npm and loaded to simple ts
+- [ ] could be installed by yarn and loaded to simple ts
+- [x] could be installed by pnpm and loaded to simple ts
 - [x] vite ts could import js (dist)
 - [x] vite js, mjs, cjs could import js (dist)
 - [ ] vite ts could import ts (src)
 - [ ] working with auto import by glob
 - [ ] `tsc -b` build only to single vite config ts instead of all ts file
+- [ ] capabilities to server virtual html and files related when `vite dev`
 - [x] uninstall glob and micromatch, and install as peer
 - [x] update README and remove the development phase
 - [ ] rename package to @beanprint/
