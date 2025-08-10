@@ -1,5 +1,5 @@
 {
-  "name": "@ten-beanprint/vite-plugin-virtual-files",
+  "name": "@qten-beanprint/vite-plugin-virtual-files",
   "private": false,
   "publishConfig": {
     "access": "public"
