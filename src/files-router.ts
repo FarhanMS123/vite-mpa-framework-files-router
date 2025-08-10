@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { ViteDevServer, type ConfigEnv, type PluginOption, type UserConfig } from "vite";
+import { type ViteDevServer, type ConfigEnv, type PluginOption, type UserConfig } from "vite";
 import path from "node:path";
 import resolve from "resolve";
 
@@ -147,7 +147,7 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
              * only need to find all virtuals and matching its metadata.
              */
             async load(id, options) {
-                console.log("load", encodeURIComponent(id), options);
+                console.log("load", encodeURIComponent(id));
 
                 const _input = input[`${PREFIX_X00}${id}`] as InputValue_Virtual;
                 if (!_input) return;
@@ -179,28 +179,28 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                     global.server = server;
                     server.middlewares.use(`/@id`, async function(req, res, next){
                         const resUrl = req.originalUrl!.split('?')[0];
+                        if (!resUrl.startsWith(`/@id/__x00__${PREFIX}`)) return next();
 
-                        if (resUrl.startsWith(`/@id/__x00__${PREFIX}`) && resUrl.endsWith(".html")) {
-                            const moduleId = resUrl.slice('/@id/__x00__'.length);
-                            try {
-                                const resId = (await server.pluginContainer.resolveId(moduleId))!.id;
-                                const _raw = (await server.pluginContainer.load(resId));
-                                
-                                /// @ts-expect-error code is exists;
-                                let raw: string = _raw?.code ?? _raw;
+                        const moduleId = resUrl.slice('/@id/__x00__'.length);
+                        try {
+                            // no need for edge case like `/page-name/index.html`
+                            const resId = (await server.pluginContainer.resolveId(moduleId))!.id;
+                            const _raw = (await server.pluginContainer.load(resId));
+                            
+                            /// @ts-expect-error code is exists;
+                            let raw: string = _raw?.code ?? _raw;
+
+                            if(resId.toLowerCase().endsWith(".html")) {
                                 raw = raw.replaceAll(PREFIX, `/@id/__x00__${PREFIX}`);
-
                                 const htmlRaw = await server.transformIndexHtml(`/@id/__x00__${PREFIX}`, raw);
                                 res.statusCode = 200;
                                 res.setHeader('Content-Type', 'text/html');
                                 res.end(htmlRaw);
-
-                                console.log(htmlRaw);
-
-                                return;
-                            } catch (e) {
+                            } else {
                                 return next();
                             }
+                        } catch (e) {
+                            return next();
                         }
                     });
                 }
