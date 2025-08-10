@@ -8,7 +8,7 @@
     "prepare:module": "npm uninstall vite-plugin-virtual-files && npm i --legacy-peer-deps ../../package.tgz && (shx rm ../../package.tgz || echo .)",
     "prepare": "npm run prepare:upper && npm run prepare:module",
     "build": "tsc -b && vite build",
-    "build:simple": "npm run prepare && && vite build -c"
+    "build:simple": "npm run prepare && vite build -c"
   },
   "dependencies": {
     "react": "^19.1.0",

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { type ConfigEnv, type PluginOption, type UserConfig } from "vite";
+import { ViteDevServer, type ConfigEnv, type PluginOption, type UserConfig } from "vite";
 import path from "node:path";
 import resolve from "resolve";
 
@@ -68,6 +68,7 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
     let __call_opts = -1;
     let config: UserConfig, env: ConfigEnv;
     let input: InputSources = {};
+    let server: ViteDevServer;
 
     return [
         {
@@ -93,6 +94,7 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
 
             configResolved(_config) {
                 Object.assign(config, _config);
+                console.log(config.build?.rollupOptions?.input);
             },
 
             /**
@@ -119,6 +121,8 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                 // TODO: does this order of `if` is right? Seems wrong.
                 // NOTE: importer should have no prefix right? straight to filename
 
+                console.log("resolveId", encodeURIComponent(source), encodeURIComponent(String(importer)));
+
                 if (source in input || `\0${source}` in input) {
                     const virtual = input[source] ?? input[`\0${source}`];
                     return virtual.out ?? undefined;
@@ -143,6 +147,8 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
              * only need to find all virtuals and matching its metadata.
              */
             async load(id, options) {
+                console.log("load", encodeURIComponent(id), options);
+
                 const _input = input[`${PREFIX_X00}${id}`] as InputValue_Virtual;
                 if (!_input) return;
 
@@ -165,6 +171,39 @@ export const virtualRouter = async (_opts: Option | OptsFunc) => {
                         raw = raw.replaceAll(RegExp(`%${key}%`, "g"), val.toString());
 
                 return raw;
+            },
+            configureServer: {
+                handler: function (_server) {
+                    server = _server;
+                    /// @ts-expect-error debug mode, let server be global
+                    global.server = server;
+                    server.middlewares.use(`/@id`, async function(req, res, next){
+                        const resUrl = req.originalUrl!.split('?')[0];
+
+                        if (resUrl.startsWith(`/@id/__x00__${PREFIX}`) && resUrl.endsWith(".html")) {
+                            const moduleId = resUrl.slice('/@id/__x00__'.length);
+                            try {
+                                const resId = (await server.pluginContainer.resolveId(moduleId))!.id;
+                                const _raw = (await server.pluginContainer.load(resId));
+                                
+                                /// @ts-expect-error code is exists;
+                                let raw: string = _raw?.code ?? _raw;
+                                raw = raw.replaceAll(PREFIX, `/@id/__x00__${PREFIX}`);
+
+                                const htmlRaw = await server.transformIndexHtml(`/@id/__x00__${PREFIX}`, raw);
+                                res.statusCode = 200;
+                                res.setHeader('Content-Type', 'text/html');
+                                res.end(htmlRaw);
+
+                                console.log(htmlRaw);
+
+                                return;
+                            } catch (e) {
+                                return next();
+                            }
+                        }
+                    });
+                }
             },
         }
     ] as PluginOption;

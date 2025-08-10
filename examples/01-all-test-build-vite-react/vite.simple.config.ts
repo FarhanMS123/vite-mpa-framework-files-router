@@ -70,6 +70,13 @@ export default defineConfig({
 
   publicDir: false,
   build: {
-    rollupOptions: {},
+    rollupOptions: {
+      input: [
+        // 'vvfr-pre:test/page-name-2.html',
+        // 'vvfr-pre:test/page-name-3/index.html',
+        // 'test/page-name-2.html',
+        // 'test/page-name-3/index.html',
+      ],
+    },
   }
 })
