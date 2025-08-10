@@ -1,21 +1,54 @@
 {
-  "name": "vite-plugin-virtual-files",
+  "name": "@ten-beanprint/vite-plugin-virtual-files",
   "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "version": "0.1.0",
   "type": "module",
   "description": "Virtual files inclusion with few basic html root template",
   "main": "dist/files-router.js",
   "module": "src/files-router.ts",
   "types": "dist/files-router.d.ts",
+  "readme": "./README.md",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "require": {
+        "types": "./dist/files-router.d.ts",
+        "default": "./dist/files-router.js"
+      },
+      "import": {
+        "types": "./dist/files-router.d.ts",
+        "default": "./dist/files-router.js"
+      }
+    },
+    "./*": {
+      "require": {
+        "types": "./*/*.d.ts",
+        "default": "./*/*.js"
+      },
+      "import": {
+        "types": "./*/*.d.ts",
+        "default": "./*/*.js"
+      }
+    },
+    "./esm": null,
+    "./modern": null
+  },
   "scripts": {
     "build": "npm run build:tsc && npm run cp:meta && npm run cp:src",
     "build:tsc": "tsc -b",
-    "pack": "npm pack && shx mv vite-plugin-virtual-files-*.tgz package.tgz",
+    "pack": "npm pack && shx mv *-vite-plugin-virtual-files-*.tgz package.tgz",
     "cp:meta": "shx cp package.json README.md tsconfig.json .eslintrc.cjs .gitignore .npmignore dist/",
     "cp:src": "shx cp src/** dist"
   },
   "keywords": [],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FarhanMS123/vite-mpa-framework-files-router.git"
+  },
+  "author": "FarhanMS123",
   "license": "ISC",
   "dependencies": {
     "resolve": "^1.22.10"

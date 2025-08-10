@@ -9,6 +9,10 @@
 
 ## Development
 
+```
+npm run prepare && npm exec vite dev -- -c vite.simple.config.ts --force -l info -d true
+```
+
 ### ToDo
 
 - [x] cleanup, examples install from .tgz
@@ -26,8 +30,9 @@
 - [ ] `tsc -b` build only to single vite config ts instead of all ts file
 - [x] capabilities to server virtual html and files related when `vite dev`
   - [ ] only import on html tag
-  - [ ] handle on js amm by required or import
-  - [ ] direct to server
+  - [ ] handle on js and by required or import; can be the \0 resolveId ([Understanding Virtual Modules in Vite and Webpack: A Modern Approach to Module Federation | by Mohammad Hossein Mazandaranian | Jun, 2025 | Medium](https://medium.com/@modos.m98/understanding-virtual-modules-in-vite-and-webpack-a-modern-approach-to-module-federation-c45985c47e35))
+  - [ ] router on root `/` redirect/mirror to x00
+  - [ ] separate plugin for server
   - [ ] hot reload on index html
   - [ ] hot reload on virtual module; change basedir to watch (if string is file, and numbers in seconds)
 - [x] uninstall glob and micromatch, and install as peer

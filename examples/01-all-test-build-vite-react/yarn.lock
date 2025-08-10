@@ -1217,9 +1217,9 @@ uri-js@^4.2.2:
     punycode "^2.1.0"
 
 "vite-plugin-virtual-files@file:../../package.tgz":
-  version "0.0.1"
+  version "0.1.0"
   resolved "file:../../package.tgz"
-  integrity sha512-5KNJ/Bs02SjlOgB0UDrSlGUJnIqQX0yZBahuoUOGn8MkwOs9r4sKlFoIKn7wuf7oc4GFBivKis9DqqXcXKQQ3w==
+  integrity sha512-8qOqcLEUHTr8EKHm2Clu/i+wZpKrJdpKiitXOHVlI2kP0mbpVv3ju0me5Z0YCZFBmtk/1ojc8GNk0lS9cCDa4Q==
   dependencies:
     resolve "^1.22.10"
 
