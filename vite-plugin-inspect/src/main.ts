@@ -2,6 +2,8 @@ import { ObjectHook as ObjectHook$1 } from 'rollup';
 import { type PluginOption, type Plugin } from 'vite';
 import { name as pkgName } from "../package.json";
 
+export type simpleObject = {[k: string]: unknown};
+
 export function log(
     name: string, 
     args_encc: number[], 
@@ -13,13 +15,21 @@ export function log(
     return (...params: unknown[]) => console.log(
         name,
         args_encc.map(ienc => encodeURIComponent(String(params[ienc]))),
-        args_plain.map(ienc => 
-            typeof ienc == "number" ? params[ienc] :
+        args_plain.map(ienc => {
+            if (typeof ienc == "number") return params[ienc];
+            const only: simpleObject = {};
+            const exclude = [];
+
+            for (const k in ienc.slice(1)) 
+                if ((k as string)[0] == "*") only[k.slice(1)] = (params[ienc[0]] as simpleObject)[k.slice(1)];
+                else exclude.push(k);
+            
+
             Object.assign(
                 params[ienc[0]] as object,
-                ...ienc.slice(1).filter(k => (k as string)[0] == "!").map(k => ({[`${(k as string).slice(1)}`]: undefined}))
+                ...exclude.map(k => ({[`${(k as string).slice(1)}`]: undefined}))
             )
-        ),
+        }),
     )
 }
 
@@ -30,9 +40,7 @@ export const flog = (handler: ObjectHook["handler"], order: ObjectHook["order"])
 export const default_inspect: PluginOption = [
     {
         name: pkgName,
-        configResolved(config) {
-            
-        },
+        configResolved: log(`${pkgName}:resolveId`, [], [[0, "!plugins"]]),
         resolveId: log(`${pkgName}:resolveId`, [0], [1]), // source, importer, options
         load: log(`${pkgName}:load`, [0]) // id, options
     }
