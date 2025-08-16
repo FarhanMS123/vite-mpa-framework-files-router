@@ -1,6 +1,8 @@
 import { ObjectHook as ObjectHook$1 } from 'rollup';
 import { type PluginOption, type Plugin } from 'vite';
-import { name as pkgName } from "../package.json";
+import { name as _pkgName } from "../package.json";
+
+const pkgName = _pkgName.split("/").slice(-1)[0]!;
 
 export type simpleObject = {[k: string]: unknown};
 
@@ -18,11 +20,14 @@ export function log(
         args_plain.map(ienc => {
             if (typeof ienc == "number") return params[ienc];
             const only: simpleObject = {};
-            const exclude = [];
+            const exclude: string[] = [];
 
             for (const k in ienc.slice(1)) 
-                if ((k as string)[0] == "*") only[k.slice(1)] = (params[ienc[0]] as simpleObject)[k.slice(1)];
-                else exclude.push(k);
+                if ((k as string)[0] == "*") {
+                    only[k.slice(1)] = (params[ienc[0]] as simpleObject)[k.slice(1)];
+                } else {
+                    exclude.push(k);
+                }
             
 
             Object.assign(
