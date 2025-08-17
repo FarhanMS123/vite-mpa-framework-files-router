@@ -6,6 +6,12 @@ const pkgName = _pkgName.split("/").slice(-1)[0]!;
 
 export type simpleObject = {[k: string]: unknown};
 
+export function rebuildJson(obj: simpleObject, excludes: string[], onlys?: string[]) {
+    obj = (onlys && onlys.length) ? {} : Object.assign({}, obj);
+
+    for (const k in onlys) {}
+}
+
 export function log(
     name: string, 
     args_encc: number[], 

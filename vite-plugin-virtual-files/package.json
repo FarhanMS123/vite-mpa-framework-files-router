@@ -46,7 +46,8 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FarhanMS123/vite-mpa-framework-files-router.git"
+    "url": "git+https://github.com/FarhanMS123/qten-beanprint.git",
+    "directory": "vite-plugin-virtual-files"
   },
   "author": "FarhanMS123",
   "license": "ISC",
