@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:playground/counter/counter.dart';
 import 'package:playground/l10n/l10n.dart';
+import 'package:playground/app/app.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -16,7 +17,19 @@ class App extends StatelessWidget {
       ),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const CounterPage(),
+      debugShowCheckedModeBanner: false,
+      home: AppPage(
+        pages: [
+          AppPageModel(
+            label: 'Baka',
+            body: const Text('Dummy'),
+          ),
+          AppPageModel(
+            label: 'Counter',
+            body: const CounterPage(),
+          ),
+        ],
+      ),
     );
   }
 }
