@@ -1,0 +1,24 @@
+{
+  "name": "journey",
+  "version": "1.0.0",
+  "main": "scripts/app.js",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FarhanMS123/journey.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FarhanMS123/journey/issues"
+  },
+  "homepage": "https://github.com/FarhanMS123/journey#readme",
+  "description": ""
+}

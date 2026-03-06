@@ -45,7 +45,7 @@ class _AppPageState extends State<AppPage> {
           scaffoldKey.currentState!.openDrawer();
         },
         shape: const CircleBorder(),
-        child: const Icon(Icons.menu_rounded),
+        child: const Icon(Icons.last_page_rounded),
       ),
       floatingActionButtonLocation: .startFloat,
       body: widget.pages[screenIndex].body,

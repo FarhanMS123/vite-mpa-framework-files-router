@@ -1068,3 +1068,5 @@ OpenCover/
 ASALocalRun/
 
 # MSBuild Binary and Structured 
+
+lib/icons_grid/cubit/generated_icons_list.dart

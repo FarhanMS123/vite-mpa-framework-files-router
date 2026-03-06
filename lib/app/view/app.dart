@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:playground/app/app.dart';
 import 'package:playground/counter/counter.dart';
+import 'package:playground/icons_grid/view/icons_grid_page.dart';
 import 'package:playground/l10n/l10n.dart';
 import 'package:playground/rainbow/view/raindow_page.dart';
 import 'package:playground/stateless_statefull_demo/view/stateless_statefull_demo_page.dart';
@@ -47,6 +48,10 @@ class App extends StatelessWidget {
           AppPageModel(
             label: 'Stateless Stateful Showcase',
             body: const StatelessStatefullDemoPage(),
+          ),
+          AppPageModel(
+            label: 'Icons Grid',
+            body: const IconsGridPage(),
           ),
         ],
       ),
