@@ -1,0 +1,7 @@
+{
+  "name": "kits-a1",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
