@@ -1,2 +1,40 @@
 /* For information on how to create your own theme, please refer to:
 http://ionicframework.com/docs/theming/ */
+
+@import "tailwindcss";
+@plugin "daisyui";
+
+@plugin "daisyui/theme" {
+    name: "foresta";
+    default: true;
+    prefersdark: false;
+    color-scheme: "light";
+    --color-base-100: oklch(59% 0.145 163.225);
+    --color-base-200: oklch(43% 0.078 188.216);
+    --color-base-300: oklch(43% 0.095 166.913);
+    --color-base-content: oklch(97% 0.013 236.62);
+    --color-primary: #66cc8a;
+    --color-primary-content: oklch(33.387% 0.04 162.24);
+    --color-secondary: oklch(58% 0.233 277.117);
+    --color-secondary-content: oklch(93% 0.034 272.788);
+    --color-accent: oklch(72.772% 0.149 33.2);
+    --color-accent-content: oklch(0% 0 0);
+    --color-neutral: oklch(35.519% 0.032 262.988);
+    --color-neutral-content: oklch(98.462% 0.001 247.838);
+    --color-info: oklch(74% 0.16 232.661);
+    --color-info-content: oklch(0% 0 0);
+    --color-success: oklch(87% 0.15 154.449);
+    --color-success-content: oklch(38% 0.063 188.416);
+    --color-warning: oklch(84.71% 0.199 83.87);
+    --color-warning-content: oklch(0% 0 0);
+    --color-error: oklch(80% 0.114 19.571);
+    --color-error-content: oklch(41% 0.112 45.904);
+    --radius-selector: 1rem;
+    --radius-field: 0.5rem;
+    --radius-box: 2rem;
+    --size-selector: 0.21875rem;
+    --size-field: 0.21875rem;
+    --border: 1px;
+    --depth: 0;
+    --noise: 0;
+}
