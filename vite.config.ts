@@ -12,6 +12,10 @@ export default defineConfig({
     legacy(),
     tailwindcss(),
   ],
+  build: {
+    minify: false,
+    emptyOutDir: true,
+  },
   test: {
     globals: true,
     environment: 'jsdom',
