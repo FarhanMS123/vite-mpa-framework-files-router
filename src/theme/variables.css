@@ -7,8 +7,8 @@ http://ionicframework.com/docs/theming/ */
 @plugin "daisyui/theme" {
     name: "foresta";
     default: true;
-    prefersdark: false;
-    color-scheme: "light";
+    prefersdark: true;
+    color-scheme: "dark";
     --color-base-100: oklch(59% 0.145 163.225);
     --color-base-200: oklch(51% 0.096 186.391);
     --color-base-300: oklch(45% 0.085 224.283);
@@ -37,4 +37,8 @@ http://ionicframework.com/docs/theming/ */
     --border: 1px;
     --depth: 0;
     --noise: 0;
+}
+
+html {
+    @apply bg-base-200;
 }
