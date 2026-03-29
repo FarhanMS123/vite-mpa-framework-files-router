@@ -5,6 +5,7 @@ import 'package:playground/counter/counter.dart';
 import 'package:playground/icons_grid/view/icons_grid_page.dart';
 import 'package:playground/l10n/l10n.dart';
 import 'package:playground/rainbow/view/raindow_page.dart';
+import 'package:playground/stack_position/view/stack_position_page.dart';
 import 'package:playground/stateless_statefull_demo/view/stateless_statefull_demo_page.dart';
 
 class App extends StatelessWidget {
@@ -52,6 +53,10 @@ class App extends StatelessWidget {
           AppPageModel(
             label: 'Icons Grid',
             body: const IconsGridPage(),
+          ),
+          AppPageModel(
+            label: 'Stack Position',
+            body: const StackPositionPage(),
           ),
         ],
       ),

@@ -113,6 +113,8 @@ app.*.map.json
 
 # Generated l10n files
 lib/l10n/gen/
+windows/flutter/generated*
+macos/Flutter/Generated*
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/c,c++,cmake,visualstudio,visualbasic,visualstudiocode,openframeworks+visualstudio,flutter,dart,windows,android,androidstudio,swift,xcode,xcodeinjection,swiftpm,swiftpackagemanager
